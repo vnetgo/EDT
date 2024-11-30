@@ -5,12 +5,11 @@ let userID = '';
 let proxyIP = '';
 let sub = '';
 let subconverter = 'SUBAPI.fxxk.dedyn.io';
-let subconfig = "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Mini_MultiMode.ini";
+let subconfig = "https://fastly.jsdelivr.net/gh/cmliu/ACL4SSR@main/Clash/config/ACL4SSR_Online_Full_MultiMode.ini";
 let subProtocol = 'https';
 let socks5Address = '';
 let parsedSocks5Address = {}; 
 let enableSocks = false;
-
 let fakeUserID ;
 let fakeHostName ;
 let noTLS = 'false'; 
