@@ -1503,17 +1503,16 @@ async function 整理优选列表(api) {
 	return newAddressesapi;
 }
 
-async function 整理测速结果(tls) {
+async function 整理测速结果(tls, env) {
 	if (!addressescsv || addressescsv.length === 0) {
 		return [];
-	}
-	
+	}	
 	let newAddressescsv = [];
-	
+	countrynum = parseInt(env.COUNTRYNUM || countrynum, 10);
+        citynum = parseInt(env.CITYNUM || citynum, 10);
 	for (const csvUrl of addressescsv) {
 		try {
-			const response = await fetch(csvUrl);
-		
+			const response = await fetch(csvUrl);		
 			if (!response.ok) {
 				console.error('获取CSV地址时出错:', response.status, response.statusText);
 				continue;
@@ -1528,14 +1527,12 @@ async function 整理测速结果(tls) {
 			}
 		
 			// 检查CSV头部是否包含必需字段
-			countrynum = env.COUNTRYNUM || countrynum
-      citynum = env.CITYNUM || citynum
-      const header = lines[0].split(',');
+                        const header = lines[0].split(',');
 			const tlsIndex = header.indexOf('TLS');
 			const ipAddressIndex = 0;// IP地址在 CSV 头部的位置
 			const portIndex = 1;// 端口在 CSV 头部的位置
-			const countryIndex = tlsIndex + ${countrynum}; // 国家是 TLS 的后第四个字段
-		  const cityIndex = tlsIndex + ${citynum}; // 城市是 tls 后第五个字段
+			const countryIndex = tlsIndex + countrynum; // 国家是 TLS 的后第四个字段
+		        const cityIndex = tlsIndex + citynum; // 城市是 tls 后第五个字段
 			if (tlsIndex === -1) {
 				console.error('CSV文件缺少必需的字段');
 				continue;
@@ -1544,13 +1541,18 @@ async function 整理测速结果(tls) {
 			// 从第二行开始遍历CSV行
 			for (let i = 1; i < lines.length; i++) {
 				const columns = lines[i].split(',');
+                                // 确保列的数量足够，避免数组越界
+                                if (columns.length <= Math.max(tlsIndex, countryIndex, cityIndex)) {
+                                    console.warn(`跳过无效行: ${lines[i]}`);
+                                    continue;
+                                }				
 				const speedIndex = columns.length - 1; // 最后一个字段
 				// 检查TLS是否为"TRUE"且速度大于DLS
 				if (columns[tlsIndex].toUpperCase() === tls && parseFloat(columns[speedIndex]) > DLS) {
 					const ipAddress = columns[ipAddressIndex];
 					const port = columns[portIndex];
 					const country = columns[countryIndex];
-			    const city = columns[cityIndex];
+			                const city = columns[cityIndex];
 					const formattedAddress = `${ipAddress}:${port}#${country} - ${city}`;
 					newAddressescsv.push(formattedAddress);
 					if (csvUrl.includes('proxyip=true') && columns[tlsIndex].toUpperCase() == 'true' && !httpsPorts.includes(port)) {
