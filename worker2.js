@@ -1508,8 +1508,8 @@ async function 整理测速结果(tls, env) {
 		return [];
 	}	
 	let newAddressescsv = [];
-        countrynum = parseInt(env.COUNTRYNUM || countrynum, 10);
-        citynum = parseInt(env.CITYNUM || citynum, 10);
+        countrynum = env.COUNTRYNUM || countrynum;
+        citynum = env.CITYNUM || citynum;
 	for (const csvUrl of addressescsv) {
 		try {
 			const response = await fetch(csvUrl);		
