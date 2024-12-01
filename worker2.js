@@ -1524,7 +1524,7 @@ async function 整理测速结果(tls, env) {
 				lines = text.split('\n');
 			}
 		
-			// 检查CSV头部是否包含必需字段
+	                // 检查CSV头部是否包含必需字段
                         const header = lines[0].split(',');
 	                const tlsIndex = header.indexOf('TLS');
 	                const ipAddressIndex = 0;// IP地址在 CSV 头部的位置
@@ -1532,9 +1532,9 @@ async function 整理测速结果(tls, env) {
 	                const countryIndex = tlsIndex + countrynum; // 国家是 TLS 的后第四个字段
 	                const cityIndex = tlsIndex + citynum; // 城市是 tls 后第五个字段
 	                if (tlsIndex === -1) {
-				console.error('CSV文件缺少必需的字段');
-				continue;
-			}
+	                    console.error('CSV文件缺少必需的字段');
+                                continue;
+                        }
 		
 			// 从第二行开始遍历CSV行
 			for (let i = 1; i < lines.length; i++) {
