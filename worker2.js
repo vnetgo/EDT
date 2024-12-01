@@ -1507,7 +1507,7 @@ async function 整理测速结果(tls, env) {
 	if (!addressescsv || addressescsv.length === 0) {
 		return [];
 	}	
-	let newAddressescsv = [];
+        let newAddressescsv = [];
         countrynum = env.COUNTRYNUM || countrynum;
         citynum = env.CITYNUM || citynum;
 	for (const csvUrl of addressescsv) {
