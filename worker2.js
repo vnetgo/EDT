@@ -1526,10 +1526,10 @@ async function 整理测速结果(tls, env) {
 		
 			// 检查CSV头部是否包含必需字段
                         const header = lines[0].split(',');
-			const tlsIndex = header.indexOf('TLS');
-			const ipAddressIndex = 0;// IP地址在 CSV 头部的位置
-			const portIndex = 1;// 端口在 CSV 头部的位置
-			const countryIndex = tlsIndex + countrynum; // 国家是 TLS 的后第四个字段
+	                const tlsIndex = header.indexOf('TLS');
+	                const ipAddressIndex = 0;// IP地址在 CSV 头部的位置
+	                const portIndex = 1;// 端口在 CSV 头部的位置
+	                const countryIndex = tlsIndex + countrynum; // 国家是 TLS 的后第四个字段
 		        const cityIndex = tlsIndex + citynum; // 城市是 tls 后第五个字段
 			if (tlsIndex === -1) {
 				console.error('CSV文件缺少必需的字段');
