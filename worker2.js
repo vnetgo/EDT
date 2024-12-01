@@ -29,8 +29,6 @@ let addressesnotlsapi = [];
 let addressescsv = [];
 let DLS = 5;
 let rename = 'CF优选🚀';
-let countrynum = 4;
-let citynum = 5;
 let FileName = atob('ZWRnZXR1bm5lbA==');
 let BotToken;
 let ChatID; 
@@ -1508,8 +1506,8 @@ async function 整理测速结果(tls, env) {
 		return [];
 	}	
         let newAddressescsv = [];
-        countrynum = env.COUNTRYNUM || countrynum;
-        citynum = env.CITYNUM || citynum;
+        const countrynum = env.COUNTRYNUM || 4;
+        const citynum = env.CITYNUM || 5;
 	for (const csvUrl of addressescsv) {
 		try {
 			const response = await fetch(csvUrl);		
