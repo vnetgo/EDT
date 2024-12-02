@@ -1534,6 +1534,7 @@ async function 整理测速结果(tls) {
 			const tlsIndex = header.indexOf('TLS');		
 			const ipAddressIndex = 0;// IP地址在 CSV 头部的位置
 			const portIndex = 1;// 端口在 CSV 头部的位置
+			//const dataCenterIndex = tlsIndex + 1; // 数据中心是 TLS 的后一个字段
 			const countryIndex = tlsIndex + countrynum; // 国家是 TLS 的后4个字段
 			const cityIndex = tlsIndex + citynum; // 城市是 TLS 的后5个字段
 			if (tlsIndex === -1) {
@@ -1549,6 +1550,8 @@ async function 整理测速结果(tls) {
 				if (columns[tlsIndex].toUpperCase() === tls && parseFloat(columns[speedIndex]) > DLS) {
 					const ipAddress = columns[ipAddressIndex];
 					const port = columns[portIndex];
+					//const dataCenter = columns[dataCenterIndex];
+					//const formattedAddress = `${ipAddress}:${port}#${dataCenter}`;
 					const country = columns[countryIndex];
 					const city = columns[cityIndex];
 					const formattedAddress = `${ipAddress}:${port}#${country} - ${city}`;
