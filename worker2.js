@@ -29,6 +29,8 @@ let addressesnotlsapi = [];
 let addressescsv = [];
 let DLS = 8;
 let rename = 'CF优选🚀';
+let countrynum = 4;
+let citynum = 5;
 let FileName = atob('ZWRnZXR1bm5lbA==');
 let BotToken;
 let ChatID; 
@@ -117,6 +119,8 @@ export default {
 			if (env.ADDCSV) addressescsv = await 整理(env.ADDCSV);
 			DLS = env.DLS || DLS;
 			rename = env.RENAME || rename;
+			countrynum = parseInt(env.COUNTRYNUM || countrynum, 10);
+			citynum = parseInt(env.CITYNUM || citynum, 10);
 			BotToken = env.TGTOKEN || BotToken;
 			ChatID = env.TGID || ChatID; 
 			if(env.GO2SOCKS5) go2Socks5s = await 整理(env.GO2SOCKS5);
@@ -1530,8 +1534,8 @@ async function 整理测速结果(tls) {
 			const tlsIndex = header.indexOf('TLS');		
 			const ipAddressIndex = 0;// IP地址在 CSV 头部的位置
 			const portIndex = 1;// 端口在 CSV 头部的位置
-			const countryIndex = tlsIndex + 4; // 国家是 TLS 的后4个字段
-			const cityIndex = tlsIndex + 5; // 国家是 TLS 的后5个字段
+			const countryIndex = tlsIndex + countrynum; // 国家是 TLS 的后4个字段
+			const cityIndex = tlsIndex + citynum; // 城市是 TLS 的后5个字段
 			if (tlsIndex === -1) {
 				console.error('CSV文件缺少必需的字段');
 				continue;
