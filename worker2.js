@@ -5,11 +5,12 @@ let userID = '';
 let proxyIP = '';
 let sub = '';
 let subconverter = 'SUBAPI.fxxk.dedyn.io';
-let subconfig = "https://fastly.jsdelivr.net/gh/cmliu/ACL4SSR@main/Clash/config/ACL4SSR_Online_Full_MultiMode.ini";
+let subconfig = "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Mini_MultiMode.ini";
 let subProtocol = 'https';
 let socks5Address = '';
 let parsedSocks5Address = {}; 
 let enableSocks = false;
+
 let fakeUserID ;
 let fakeHostName ;
 let noTLS = 'false'; 
@@ -27,7 +28,7 @@ let addressesapi = [];
 let addressesnotls = [];
 let addressesnotlsapi = [];
 let addressescsv = [];
-let DLS = 5;
+let DLS = 8;
 let rename = 'CF优选🚀';
 let FileName = atob('ZWRnZXR1bm5lbA==');
 let BotToken;
@@ -1501,16 +1502,17 @@ async function 整理优选列表(api) {
 	return newAddressesapi;
 }
 
-async function 整理测速结果(tls, env) {
+async function 整理测速结果(tls) {
 	if (!addressescsv || addressescsv.length === 0) {
 		return [];
-	}	
-        let newAddressescsv = [];
-        const countrynum = env.COUNTRYNUM || 4;
-        const citynum = env.CITYNUM || 5;
+	}
+	
+	let newAddressescsv = [];
+	
 	for (const csvUrl of addressescsv) {
 		try {
-			const response = await fetch(csvUrl);		
+			const response = await fetch(csvUrl);
+		
 			if (!response.ok) {
 				console.error('获取CSV地址时出错:', response.status, response.statusText);
 				continue;
@@ -1524,34 +1526,30 @@ async function 整理测速结果(tls, env) {
 				lines = text.split('\n');
 			}
 		
-	                // 检查CSV头部是否包含必需字段
-                        const header = lines[0].split(',');
-	                const tlsIndex = header.indexOf('TLS');
-	                const ipAddressIndex = 0;// IP地址在 CSV 头部的位置
-	                const portIndex = 1;// 端口在 CSV 头部的位置
-	                const countryIndex = tlsIndex + countrynum; // 国家是 TLS 的后第四个字段
-	                const cityIndex = tlsIndex + citynum; // 城市是 tls 后第五个字段
-	                if (tlsIndex === -1) {
-	                    console.error('CSV文件缺少必需的字段');
-                                continue;
-                        }
+			// 检查CSV头部是否包含必需字段
+			const header = lines[0].split(',');
+			const tlsIndex = header.indexOf('TLS');
+			
+			const ipAddressIndex = 0;// IP地址在 CSV 头部的位置
+			const portIndex = 1;// 端口在 CSV 头部的位置
+			const dataCenterIndex = tlsIndex + 4; // 国家是 TLS 的后4个字段
+		        const cityIndex = tlsIndex + 5; // 国家是 TLS 的后5个字段
+			if (tlsIndex === -1) {
+				console.error('CSV文件缺少必需的字段');
+				continue;
+			}
 		
 			// 从第二行开始遍历CSV行
 			for (let i = 1; i < lines.length; i++) {
 				const columns = lines[i].split(',');
-                                // 确保列的数量足够，避免数组越界
-                                if (columns.length <= Math.max(tlsIndex, countryIndex, cityIndex)) {
-                                    console.warn(`跳过无效行: ${lines[i]}`);
-                                    continue;
-                                }				
 				const speedIndex = columns.length - 1; // 最后一个字段
 				// 检查TLS是否为"TRUE"且速度大于DLS
 				if (columns[tlsIndex].toUpperCase() === tls && parseFloat(columns[speedIndex]) > DLS) {
 					const ipAddress = columns[ipAddressIndex];
 					const port = columns[portIndex];
-					const country = columns[countryIndex];
+					const dataCenter = columns[dataCenterIndex];
 			                const city = columns[cityIndex];
-					const formattedAddress = `${ipAddress}:${port}#${country} - ${city}`;
+					const formattedAddress = `${ipAddress}:${port}#${dataCenter} - ${city}`;
 					newAddressescsv.push(formattedAddress);
 					if (csvUrl.includes('proxyip=true') && columns[tlsIndex].toUpperCase() == 'true' && !httpsPorts.includes(port)) {
 						// 如果URL带有'proxyip=true'，则将内容添加到proxyIPPool
@@ -1623,10 +1621,8 @@ function 生成本地订阅(host,UUID,noTLS,newAddressesapi,newAddressescsv,newA
 			let 伪装域名 = host ;
 			let 最终路径 = '/?ed=2560' ;
 			let 节点备注 = '';
-			const 协议类型 = atob(啥啥啥_写的这是啥啊);
-			
+			const 协议类型 = atob(啥啥啥_写的这是啥啊);			
 			const vlessLink = `${协议类型}://${UUID}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT0mdHlwZT13cyZob3N0PQ==') + 伪装域名}&path=${encodeURIComponent(最终路径)}#${encodeURIComponent(rename + addressid + 节点备注)}`;
-	
 			return vlessLink;
 
 		}).join('\n');
@@ -1635,7 +1631,6 @@ function 生成本地订阅(host,UUID,noTLS,newAddressesapi,newAddressescsv,newA
 
 	// 使用Set对象去重
 	const uniqueAddresses = [...new Set(addresses)];
-
 	const responseBody = uniqueAddresses.map(address => {
 		let port = "-1";
 		let addressid = address;
@@ -1681,8 +1676,7 @@ function 生成本地订阅(host,UUID,noTLS,newAddressesapi,newAddressescsv,newA
 		let 最终路径 = '/?ed=2560' ;
 		let 节点备注 = '';
 		const matchingProxyIP = proxyIPPool.find(proxyIP => proxyIP.includes(address));
-		if (matchingProxyIP) 最终路径 += `&proxyip=${matchingProxyIP}`;
-		
+		if (matchingProxyIP) 最终路径 += `&proxyip=${matchingProxyIP}`;	
 		if(proxyhosts.length > 0 && (伪装域名.includes('.workers.dev'))) {
 			最终路径 = `/${伪装域名}${最终路径}`;
 			伪装域名 = proxyhosts[Math.floor(Math.random() * proxyhosts.length)];
@@ -1690,8 +1684,7 @@ function 生成本地订阅(host,UUID,noTLS,newAddressesapi,newAddressescsv,newA
 		}
 		
 		const 协议类型 = atob(啥啥啥_写的这是啥啊);
-		const vlessLink = `${协议类型}://${UUID}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT10bHMmc25pPQ==') + 伪装域名}&fp=random&type=ws&host=${伪装域名}&path=${encodeURIComponent(最终路径)}#${encodeURIComponent(rename + addressid + 节点备注)}`;
-			
+		const vlessLink = `${协议类型}://${UUID}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT10bHMmc25pPQ==') + 伪装域名}&fp=random&type=ws&host=${伪装域名}&path=${encodeURIComponent(最终路径)}#${encodeURIComponent(rename + addressid + 节点备注)}`;			
 		return vlessLink;
 	}).join('\n');
 
