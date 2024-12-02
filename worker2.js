@@ -10,7 +10,6 @@ let subProtocol = 'https';
 let socks5Address = '';
 let parsedSocks5Address = {}; 
 let enableSocks = false;
-
 let fakeUserID ;
 let fakeHostName ;
 let noTLS = 'false'; 
