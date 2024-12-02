@@ -1528,11 +1528,10 @@ async function 整理测速结果(tls) {
 		
 			// 检查CSV头部是否包含必需字段
 			const header = lines[0].split(',');
-			const tlsIndex = header.indexOf('TLS');
-			
+			const tlsIndex = header.indexOf('TLS');		
 			const ipAddressIndex = 0;// IP地址在 CSV 头部的位置
 			const portIndex = 1;// 端口在 CSV 头部的位置
-			const dataCenterIndex = tlsIndex + 4; // 国家是 TLS 的后4个字段
+			const countryIndex = tlsIndex + 4; // 国家是 TLS 的后4个字段
 		        const cityIndex = tlsIndex + 5; // 国家是 TLS 的后5个字段
 			if (tlsIndex === -1) {
 				console.error('CSV文件缺少必需的字段');
@@ -1547,9 +1546,9 @@ async function 整理测速结果(tls) {
 				if (columns[tlsIndex].toUpperCase() === tls && parseFloat(columns[speedIndex]) > DLS) {
 					const ipAddress = columns[ipAddressIndex];
 					const port = columns[portIndex];
-					const dataCenter = columns[dataCenterIndex];
+					const country = columns[countryIndex];
 			                const city = columns[cityIndex];
-					const formattedAddress = `${ipAddress}:${port}#${dataCenter} - ${city}`;
+					const formattedAddress = `${ipAddress}:${port}#${country} - ${city}`;
 					newAddressescsv.push(formattedAddress);
 					if (csvUrl.includes('proxyip=true') && columns[tlsIndex].toUpperCase() == 'true' && !httpsPorts.includes(port)) {
 						// 如果URL带有'proxyip=true'，则将内容添加到proxyIPPool
