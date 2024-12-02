@@ -1531,8 +1531,8 @@ async function 整理测速结果(tls) {
 			const tlsIndex = header.indexOf('TLS');		
 			const ipAddressIndex = 0;// IP地址在 CSV 头部的位置
 			const portIndex = 1;// 端口在 CSV 头部的位置
-			const countryIndex = tlsIndex + 4; // 国家是 TLS 的后4个字段
-		        const cityIndex = tlsIndex + 5; // 国家是 TLS 的后5个字段
+			const dataCenterIndex = tlsIndex + 4; // 国家是 TLS 的后4个字段
+			const cityIndex = tlsIndex + 5; // 国家是 TLS 的后5个字段
 			if (tlsIndex === -1) {
 				console.error('CSV文件缺少必需的字段');
 				continue;
@@ -1546,9 +1546,9 @@ async function 整理测速结果(tls) {
 				if (columns[tlsIndex].toUpperCase() === tls && parseFloat(columns[speedIndex]) > DLS) {
 					const ipAddress = columns[ipAddressIndex];
 					const port = columns[portIndex];
-					const country = columns[countryIndex];
-			                const city = columns[cityIndex];
-					const formattedAddress = `${ipAddress}:${port}#${country} - ${city}`;
+					const dataCenter = columns[dataCenterIndex];
+					const city = columns[cityIndex];
+					const formattedAddress = `${ipAddress}:${port}#${dataCenter} - ${city}`;
 					newAddressescsv.push(formattedAddress);
 					if (csvUrl.includes('proxyip=true') && columns[tlsIndex].toUpperCase() == 'true' && !httpsPorts.includes(port)) {
 						// 如果URL带有'proxyip=true'，则将内容添加到proxyIPPool
@@ -1709,7 +1709,6 @@ async function 整理(内容) {
 
 async function sendMessage(type, ip, add_data = "") {
 	if (!BotToken || !ChatID) return;
-
 	try {
 		let msg = "";
 		const response = await fetch(`http://ip-api.com/json/${ip}?lang=zh-CN`);
