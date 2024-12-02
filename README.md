@@ -1,8 +1,19 @@
-# 在CM原代码基础上做了三点修改
-- 添加`RENAME`变量，用于在节点名称前添加统一的前缀，例如： RENAME = CF优选🚀
-- 原代码从`ADDCSV`变量获取的节点名称为`数据中心`，此处改为中文的`国家`，对应的[测速工具](https://github.com/bh-qt/Cloudflare-IP-SpeedTest)
-- 在`ADDCSV`变量生成的节点名称的`国家`之后添加`城市`，如：`CF优选🚀美国 - 圣何塞`
-- 本修改不负责维护，一切错误请自行解决。建议用CM大佬的原代码进行搭建
+# 在CM源代码基础上增加三个变量，统一生成 ADDCSV 文件的节点名称
+
+- 变量 `RENAME`：节点别名的前缀，例如：`CF优选🚀`
+- 变量 `COUNTRYNUM`：节点显示的`国家`名称，查看你的`csv文件表头`中**国家**位于`TLS列`后`第几列`，比如我的是TLS后第四列，我这里就填写`4`
+- 变量 `CITYNUM`：节点显示的`城市`名称，查看你的`csv文件表头`中**城市**位于`TLS列`后`第几列`，比如我的是TLS后第五列，我这里就填写`5`
+- 最终订阅出来的节点名称为 `CF优选🚀日本 - 大阪`
+
+![image](https://github.com/user-attachments/assets/9d61c9d2-b69e-4a75-a2cd-bd08bd0dc73b)
+
+我使用的[测速工具](https://github.com/bh-qt/Cloudflare-IP-SpeedTest)生成的csv表头是这样的：
+
+![image](https://github.com/user-attachments/assets/8de5cf81-4490-4499-b505-42375159698a)
+
+如果你不想以`国家-城市`显示节点名称，例如你想显示为`数据中心-延迟`，则可将变量 `COUNTRYNUM`的值设为`1`，将变量`CITYNUM`的值设为`6`
+
+**声明：本修改不负责维护，一切错误请自行解决。如果没有代码动手能力，建议用CM大佬的源代码进行搭建**
 
 # edgetunnel
 这是一个基于 CF Worker 平台的脚本，在原版的基础上修改了显示 VLESS 配置信息转换为订阅内容。使用该脚本，你可以方便地将 VLESS 配置信息使用在线配置转换到 Clash 或 Singbox 等工具中。
