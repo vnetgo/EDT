@@ -19,14 +19,19 @@ jobs:
       - name: Checkout target repo
         uses: actions/checkout@v3
 
-      # 步骤 2: 获取上游的目标文件
+      # 步骤 2: 添加上游仓库为远程仓库
+      - name: Add upstream repo
+        run: |
+          git remote add upstream https://github.com/cmliu/edgetunnel.git
+          git fetch upstream
+
+      # 步骤 3: 获取上游的目标文件
       - name: Fetch upstream files
         run: |
-          git fetch cmliu
-          git checkout cmliu/edgetunnel/main -- 明文源码.js
+          git checkout upstream/main -- 明文源码.js
           echo "已获取远程目标文件"
 
-      # 步骤 3: 合并目标文件到本仓库
+      # 步骤 4: 合并目标文件到本仓库
       - name: Merge upstream files
         run: |
           if ! git diff --quiet 明文源码.js; then
@@ -37,7 +42,7 @@ jobs:
             echo "本地文件与远程文件相同，无需合并"
           fi
 
-      # 步骤 4: 提交更改
+      # 步骤 5: 提交更改
       - name: Commit changes
         run: |
           git add 明文源码.js
