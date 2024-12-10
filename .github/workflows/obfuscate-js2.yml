@@ -1,4 +1,4 @@
-name: Obfuscate js
+name: Obfuscate js2
 
 permissions:
   contents: write
