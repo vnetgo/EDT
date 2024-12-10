@@ -1,0 +1,56 @@
+name: Obfuscate js
+
+permissions:
+  contents: write
+
+on:
+  push:
+    paths:
+      - 明文源码2.js
+  workflow_dispatch:
+
+jobs:
+  obfuscate_and_update_worker:
+    name: Obfuscate js
+    runs-on: ubuntu-latest
+
+    steps:
+      # 步骤 1: 检出仓库代码
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 步骤 2: 设置 Node.js 环境
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # 步骤 3: 安装混淆工具
+      - name: Install obfuscation tool
+        run: |
+          npm install -g javascript-obfuscator
+
+      # 步骤 4: 对 明文源码2.js 进行混淆加密
+      - name: Obfuscate 明文源码2.js
+        run: |
+          javascript-obfuscator 明文源码2.js --output jiami2.js --compact true --control-flow-flattening false
+          echo "已生成混淆后的 jiami2.js 文件"
+
+      # 步骤 5: 检查 jiami2.js 是否更新
+      - name: Check if jiami2.js is updated
+        run: |
+          if ! git diff --quiet jiami2.js; then
+            echo "jiami2.js 文件已更新"
+          else
+            echo "jiami2.js 文件未发生更改，无需提交"
+            exit 0
+          fi
+
+      # 步骤 6: 提交并推送更改
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add jiami2.js
+          git commit -m "更新混淆后的 jiami2.js 文件"
+          git push
