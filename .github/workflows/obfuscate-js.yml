@@ -33,7 +33,19 @@ jobs:
       # 步骤 4: 对 明文源码.js 进行混淆加密
       - name: Obfuscate 明文源码.js
         run: |
-          javascript-obfuscator 明文源码.js --output _worker.js --compact true --control-flow-flattening false
+          javascript-obfuscator 明文源码.js --output _worker.js \
+          --compact true \
+          --control-flow-flattening true \
+          --control-flow-flattening-threshold 1 \
+          --dead-code-injection true \
+          --dead-code-injection-threshold 1 \
+          --identifier-names-generator hexadecimal \
+          --rename-globals true \
+          --string-array true \
+          --string-array-encoding 'rc4' \
+          --string-array-threshold 1 \
+          --transform-object-keys true \
+          --unicode-escape-sequence true
           echo "已生成混淆后的 _worker.js 文件"
 
       # 步骤 5: 检查 _worker.js 是否更新
