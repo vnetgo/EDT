@@ -31,19 +31,15 @@ jobs:
           git checkout upstream/main -- 明文源码.js || true
           echo "强制更新或新建本地文件 明文源码.js 完成"
 
-      # 步骤 4: 设置 Git 用户信息
-      - name: Set Git user
-        run: |
-          git config --global user.name "GitHub Actions Bot"
-          git config --global user.email "actions@github.com"
-
-      # 步骤 5: 检查是否有更改并提交
+      # 步骤 4: 检查是否有更改并提交
       - name: Commit changes
         run: |
           if ! git diff --quiet HEAD 明文源码.js; then
-            git add 明文源码.js;
-            git commit -m "强制覆盖或更新 明文源码.js 文件内容";
-            git push;
+            git config --global user.name "GitHub Actions Bot"
+            git config --global user.email "actions@github.com"
+            git add 明文源码.js
+            git commit -m "强制覆盖或更新 明文源码.js"
+            git push
           else
-            echo "没有检测到文件更改，跳过提交";
+            echo "没有检测到文件更改，跳过提交"
           fi
