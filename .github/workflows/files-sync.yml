@@ -1,4 +1,4 @@
-name: Upstream files Sync
+name: Upstream File Sync
 
 permissions:
   contents: write
@@ -10,7 +10,7 @@ on:
 
 jobs:
   sync_latest_from_upstream:
-    name: Sync latest commits from upstream repo
+    name: Sync specific file from upstream repo
     runs-on: ubuntu-latest
     if: ${{ github.event.repository.fork }}
 
@@ -25,21 +25,24 @@ jobs:
           git remote add upstream https://github.com/cmliu/edgetunnel.git
           git fetch upstream
 
-      # 步骤 3: 强制覆盖本地同名文件
-      - name: Force update file from upstream
+      # 步骤 3: 强制覆盖或创建本地文件
+      - name: Force update or create file from upstream
+        env:
+          FILE_TO_SYNC: 明文源码.js # 可灵活修改
         run: |
-          git checkout upstream/main -- 明文源码.js || true
-          echo "强制更新或新建本地文件 明文源码.js 完成"
+          git checkout upstream/main -- "$FILE_TO_SYNC" || true
+          echo "强制更新或新建本地文件 $FILE_TO_SYNC 完成"
 
       # 步骤 4: 检查是否有更改并提交
       - name: Commit changes
+        env:
+          FILE_TO_SYNC: 明文源码.js
         run: |
-          if ! git diff --quiet HEAD 明文源码.js; then
+          if ! git diff --quiet HEAD "$FILE_TO_SYNC"; then
             git config --global user.name "GitHub Actions Bot"
             git config --global user.email "actions@github.com"
-            git add 明文源码.js
-            git commit -m "强制覆盖或更新 明文源码.js"
+            git add "$FILE_TO_SYNC"
+            git commit -m "强制覆盖或更新 $FILE_TO_SYNC"
             git push
           else
             echo "没有检测到文件更改，跳过提交"
-          fi
