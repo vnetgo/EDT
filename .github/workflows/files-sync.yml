@@ -13,6 +13,8 @@ jobs:
     name: Sync specific file from upstream repo
     runs-on: ubuntu-latest
     if: ${{ github.event.repository.fork }}
+    env:
+      FILE_TO_SYNC: 明文源码.js # 定义全局变量，供多个步骤使用
 
     steps:
       # 步骤 1: 检出目标仓库
@@ -27,16 +29,12 @@ jobs:
 
       # 步骤 3: 强制覆盖或创建本地文件
       - name: Force update or create file from upstream
-        env:
-          FILE_TO_SYNC: 明文源码.js # 可灵活修改
         run: |
           git checkout upstream/main -- "$FILE_TO_SYNC" || true
           echo "强制更新或新建本地文件 $FILE_TO_SYNC 完成"
 
       # 步骤 4: 检查是否有更改并提交
       - name: Commit changes
-        env:
-          FILE_TO_SYNC: 明文源码.js
         run: |
           if ! git diff --quiet HEAD "$FILE_TO_SYNC"; then
             git config --global user.name "GitHub Actions Bot"
