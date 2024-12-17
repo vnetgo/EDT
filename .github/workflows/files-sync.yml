@@ -46,3 +46,4 @@ jobs:
             git push
           else
             echo "没有检测到文件更改，跳过提交"
+          fi
