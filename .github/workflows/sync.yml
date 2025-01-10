@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: vnetgo/edt
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT }} # 使用 PAT 访问源仓库
           path: target
 
       - name: Checkout source repository
@@ -25,16 +25,13 @@ jobs:
           token: ${{ secrets.PAT }} # 使用 PAT 访问源仓库
           path: source
 
-      - name: List files in source directory
-        run: ls -la source
-
-      - name: Sync changes from source to target
+      # 强制同步源仓库到目标仓库
+      - name: Force sync from source to target
         run: |
-          rsync -av --delete source/ target/
+          rsync -av --delete source/ target/ # 同步文件
           cd target
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add .
-          git commit -m "Sync with yutian81/edgetunnel-cmliu on $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
-          git fetch --tags -f # 强制同步标签
-          git push origin main --force-with-lease # 强制推送
+          git commit -m "Force sync with A/aa repository" || echo "No changes to commit"
+          git push origin main --force # 强制推送
