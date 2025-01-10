@@ -21,10 +21,12 @@ jobs:
             - name: Sync Upstream
               uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
               with:
-                  target_repo_token: ${{ secrets.GITHUB_TOKEN }}
-                  upstream_sync_repo: yutian81/edgetunnel-cmliu
-                  upstream_sync_branch: main
-                  target_sync_branch: main
+                  target_repo_token: ${{ secrets.GITHUB_TOKEN }}                 
+                  remote addremote add upstream:yutian81/edgetunnel-cmli
+
+                  upstream_sync_repo: yutian81/edgetunnel-cmliu                 
+                  fetch upstream                 
+                  merge upstream/main
                   test_mode: false
 
             - name: Check for Failure
