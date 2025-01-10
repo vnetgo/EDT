@@ -11,13 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 拉取目标仓库
       - name: Checkout target repository
         uses: actions/checkout@v3
         with:
           repository: vnetgo/edt
-          token: ${{ secrets.PAT }} # 使用 PAT 访问源仓库
+          token: ${{ secrets.PAT }} # 使用 PAT 访问目标仓库
           path: target
 
+      # 拉取源仓库
       - name: Checkout source repository
         uses: actions/checkout@v3
         with:
@@ -26,7 +28,9 @@ jobs:
           path: source
 
       # 同步源仓库到目标仓库
-          cd  target
+      - name: Sync changes
+        run: |
+          cd target
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git remote add source ../source
