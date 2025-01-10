@@ -1,4 +1,4 @@
-ame: Sync Repository
+name: Sync Repository
 
 on:
   schedule:
