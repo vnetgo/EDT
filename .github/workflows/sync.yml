@@ -28,9 +28,6 @@ jobs:
       - name: Debug PAT
         run: echo "PAT is configured: ${{ secrets.PAT != '' }}"
 
-      - name: List files in source directory
-        run: ls -la source
-
       - name: Sync changes from source to target
         run: |
           rsync -av --delete source/ target/
