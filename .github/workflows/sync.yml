@@ -36,4 +36,5 @@ jobs:
           git config --global user.email "actions@github.com"
           git add .
           git commit -m "Sync with yutian81/edgetunnel-cmliu on $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
-          git push origin main
+          git fetch --tags -f # 强制同步标签
+          git push origin main --force-with-lease # 强制推送
