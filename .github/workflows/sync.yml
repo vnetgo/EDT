@@ -27,7 +27,7 @@ jobs:
 
       - name: Sync files
         run: |
-          rsync -av --delete target-repo/ source-repo/
+          rsync -av --delete target-repo/ source-repo/ --force
           cd source-repo
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
