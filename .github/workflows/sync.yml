@@ -1,36 +1,36 @@
-name: Upstream Sync
-
-permissions:
-    contents: write
+ame: Sync Repository
 
 on:
-    schedule:
-        - cron: "0 0 * * *"
-    workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'  # 每天午夜运行一次
+  workflow_dispatch:  # 允许手动触发工作流
 
 jobs:
-    sync_with_upstream:
-        name: Sync with Upstream
-        runs-on: ubuntu-latest
-        if: ${{ github.event.repository.fork }}
+  sync:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout target repo
-              uses: actions/checkout@v3
+    steps:
+      - name: Checkout the target repository
+        uses: actions/checkout@v2
+        with:
+          repository: vnetgo/edt
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: target-repo
 
-            - name: Sync Upstream
-              uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
-              with:
-                  target_repo_token: ${{ secrets.GITHUB_TOKEN }}                 
-                  remote addremote add upstream:yutian81/edgetunnel-cmli
+      - name: Checkout the source repository
+        uses: actions/checkout@v2
+        with:
+          repository: yutian81/edgetunnel-cmliu 
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: source-repo
+          ref: main  # 可以根据需要更改为其他分支
 
-                  upstream_sync_repo: yutian81/edgetunnel-cmliu                 
-                  fetch upstream                 
-                  merge upstream/main
-                  test_mode: false
-
-            - name: Check for Failure
-              if: failure()
-              run: |
-                  echo "[Error] Due to a change in the workflow file of the upstream repository, GitHub has automatically suspended the scheduled automatic update. You need to manually sync your fork."
-                  exit 1
+      - name: Sync files
+        run: |
+          rsync -av --delete target-repo/ source-repo/
+          cd source-repo
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add .
+          git commit -m "Sync from yutian81/edgetunnel-cmliu on $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+          git push origin main  # 可以根据需要更改为其他分支name: Sync Repository
