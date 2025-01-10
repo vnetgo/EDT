@@ -2,35 +2,35 @@ name: Sync Repository
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 每天午夜运行一次
-  workflow_dispatch:  # 允许手动触发工作流
+    # 每天凌晨 3 点自动同步
+    - cron: '0 3 * * *'
+  workflow_dispatch: # 允许手动触发
 
 jobs:
   sync:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout the target repository
-        uses: actions/checkout@v2
+      - name: Checkout target repository
+        uses: actions/checkout@v3
         with:
           repository: vnetgo/edt
           token: ${{ secrets.GITHUB_TOKEN }}
-          path: target-repo
+          path: target
 
-      - name: Checkout the source repository
-        uses: actions/checkout@v2
+      - name: Checkout source repository
+        uses: actions/checkout@v3
         with:
-          repository: yutian81/edgetunnel-cmliu 
+          repository: yutian81/edgetunnel-cmliu
           token: ${{ secrets.GITHUB_TOKEN }}
-          path: source-repo
-          ref: main  # 可以根据需要更改为其他分支
+          path: source
 
-      - name: Sync files
+      - name: Sync changes from source to target
         run: |
-          rsync -av --delete target-repo/ source-repo/
-          cd source-repo
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
+          rsync -av --delete source/ target/
+          cd target
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
           git add .
-          git commit -m "Sync from yutian81/edgetunnel-cmliu on $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"         
-          git push origin main --force
+          git commit -m "Sync with yutian81/edgetunnel-cmliu on $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+          git push origin main
