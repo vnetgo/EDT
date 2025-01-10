@@ -18,6 +18,7 @@ jobs:
           repository: vnetgo/edt
           token: ${{ secrets.PAT }} # 使用 PAT 访问目标仓库
           path: target
+          fetch-depth: 0 # 禁用浅克隆，拉取完整历史
 
       # 拉取源仓库
       - name: Checkout source repository
@@ -26,6 +27,7 @@ jobs:
           repository: yutian81/edgetunnel-cmliu
           token: ${{ secrets.PAT }} # 使用 PAT 访问源仓库
           path: source
+          fetch-depth: 0 # 禁用浅克隆，拉取完整历史
 
       # 同步源仓库到目标仓库
       - name: Sync changes
