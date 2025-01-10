@@ -27,10 +27,10 @@ jobs:
 
       - name: Sync files
         run: |
-          rsync -av --delete target-repo/ source-repo/ --force
+          rsync -av --delete target-repo/ source-repo/
           cd source-repo
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
           git add .
-          git commit -m "Sync from yutian81/edgetunnel-cmliu on $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
-          git push origin main  # 可以根据需要更改为其他分支name: Sync Repository
+          git commit -m "Sync from yutian81/edgetunnel-cmliu on $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"         
+          git push origin main --force
