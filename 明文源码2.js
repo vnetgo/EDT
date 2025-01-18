@@ -1,4 +1,4 @@
-//修改：格式为csv文件的节点名称为 “国家 | 城市 | 节点备注”
+// 修改：格式为csv文件的节点名称为 “国家 | 城市 | 节点备注”
 import { connect } from 'cloudflare:sockets';
 let userID = '';
 let proxyIP = '';
@@ -1645,7 +1645,6 @@ async function 整理测速结果(tls) {
 	}
 
 	let newAddressescsv = [];
-	//rename = env.RENAME || rename;
 	for (const csvUrl of addressescsv) {
 		try {
 			const response = await fetch(csvUrl);
@@ -1688,7 +1687,7 @@ async function 整理测速结果(tls) {
 					const port = columns[portIndex];
 					// const dataCenter = columns[dataCenterIndex];
 					const country = columns[countryIndex];
-                                        const city = columns[cityIndex];
+					const city = columns[cityIndex];
 					const formattedAddress = `${ipAddress}:${port}#${country} | ${city} | ${rename}`;
 					// const formattedAddress = `${ipAddress}:${port}#${dataCenter}`;
 					newAddressescsv.push(formattedAddress);
@@ -1723,7 +1722,7 @@ function 生成本地订阅(host, UUID, noTLS, newAddressesapi, newAddressescsv,
 
 			const match = addressid.match(regex);
 			if (!match) {
-				if (address.includes(':') && address.includes('#')) {
+				if (address.includes(':') && address.includes('#')) { 
 					const parts = address.split(':');
 					address = parts[0];
 					const subParts = parts[1].split('#');
