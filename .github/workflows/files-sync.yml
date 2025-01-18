@@ -39,15 +39,14 @@ jobs:
       # 步骤 4: 检查和更新 $FILE_TO_SYNC
       - name: Check and update $FILE_TO_SYNC
         run: |
-          # 确保文件名正确匹配
-          FILE_TO_SYNC_ENCODED=$(echo "$FILE_TO_SYNC" | iconv -f utf-8 -t utf-8)
-          if git ls-tree -r upstream/$UP_BRANCH --name-only | grep -q "^$FILE_TO_SYNC_ENCODED$"; then
+          # 确保文件名没有多余空格
+          FILE_TO_SYNC=$(echo "$FILE_TO_SYNC" | xargs)
+          echo "Sanitized file name: '$FILE_TO_SYNC'"
+
+          if git ls-tree -r upstream/$UP_BRANCH --name-only | grep -q "^$FILE_TO_SYNC$"; then
             echo "文件 $FILE_TO_SYNC 存在于 $UP_REPO，开始比较内容差异..."
-            
-            # 检出上游文件到临时目录
             mkdir -p temp
-            git checkout upstream/$UP_BRANCH -- "$FILE_TO_SYNC" 
-            mv "$FILE_TO_SYNC" temp/upstream_file 
+            git show "upstream/$UP_BRANCH:$FILE_TO_SYNC" > temp/upstream_file
             
             # 比较文件内容
             if [ -f "$FILE_TO_SYNC" ] && cmp -s temp/upstream_file "$FILE_TO_SYNC"; then
