@@ -1645,7 +1645,7 @@ async function 整理测速结果(tls) {
 	}
 
 	let newAddressescsv = [];
-
+        const rename = env.RENAME || rename
 	for (const csvUrl of addressescsv) {
 		try {
 			const response = await fetch(csvUrl);
@@ -1689,7 +1689,7 @@ async function 整理测速结果(tls) {
 					// const dataCenter = columns[dataCenterIndex];
 					const country = columns[countryIndex];
                                         const city = columns[cityIndex];
-					const formattedAddress = `${ipAddress}:${port}#${country} | ${city} | rename`;
+					const formattedAddress = `${ipAddress}:${port}#${country} | ${city} | ${rename}`;
 					// const formattedAddress = `${ipAddress}:${port}#${dataCenter}`;
 					newAddressescsv.push(formattedAddress);
 					if (csvUrl.includes('proxyip=true') && columns[tlsIndex].toUpperCase() == 'true' && !httpsPorts.includes(port)) {
