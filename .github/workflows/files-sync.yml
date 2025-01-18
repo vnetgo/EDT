@@ -18,35 +18,36 @@ jobs:
       FILE_TO_SYNC: 明文源码.js # 需要同步的文件
 
     steps:
-      # 设置 UTF-8 编码环境
+      # 步骤 1: 设置 UTF-8 编码环境 和 git 编码
       - name: Set UTF-8 encoding
         run: |
           export LC_ALL=C.UTF-8
           export LANG=C.UTF-8
-      
-      # 步骤 1: 检出目标仓库
+          git config --global core.quotepath false
+          git config --global i18n.logOutputEncoding utf-8
+
+      # 步骤 2: 检出目标仓库
       - name: Checkout target repo
         uses: actions/checkout@v3
 
-      # 步骤 2: 添加上游仓库为远程仓库
+      # 步骤 3: 添加上游仓库为远程仓库
       - name: Add upstream repo $UP_REPO
         run: |
           git remote add upstream https://github.com/$UP_REPO.git
           git fetch upstream
 
-      # 步骤 3: 检查上游目标文件是否存在并更新
-      - name: Check and update $FILE_TO_SYNC     
+      # 步骤 4: 检查和更新 $FILE_TO_SYNC
+      - name: Check and update $FILE_TO_SYNC
         run: |
-          export LC_ALL=C.UTF-8
-          export LANG=C.UTF-8
-          # 检查上游文件是否存在
-          if git ls-tree -r upstream/$UP_BRANCH --name-only | grep -q "^$FILE_TO_SYNC$"; then
+          # 确保文件名正确匹配
+          FILE_TO_SYNC_ENCODED=$(echo "$FILE_TO_SYNC" | iconv -f utf-8 -t utf-8)
+          if git ls-tree -r upstream/$UP_BRANCH --name-only | grep -q "^$FILE_TO_SYNC_ENCODED$"; then
             echo "文件 $FILE_TO_SYNC 存在于 $UP_REPO，开始比较内容差异..."
             
             # 检出上游文件到临时目录
             mkdir -p temp
-            git checkout upstream/$UP_BRANCH -- "$FILE_TO_SYNC"
-            mv "$FILE_TO_SYNC" temp/upstream_file
+            git checkout upstream/$UP_BRANCH -- "$FILE_TO_SYNC" 
+            mv "$FILE_TO_SYNC" temp/upstream_file 
             
             # 比较文件内容
             if [ -f "$FILE_TO_SYNC" ] && cmp -s temp/upstream_file "$FILE_TO_SYNC"; then
@@ -63,7 +64,7 @@ jobs:
             echo "错误：文件 $FILE_TO_SYNC 不存在于 $UP_REPO，跳过更新"
           fi
 
-      # 步骤 4: 提交更改并推送
+      # 步骤 5: 提交更改并推送
       - name: Commit and push changes
         run: |
           git config --global user.name "GitHub Actions Bot"
