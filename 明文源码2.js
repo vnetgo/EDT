@@ -1,4 +1,4 @@
-// 修改：格式为csv文件的节点名称为 “国家 | 城市 | 节点备注”
+//修改：格式为csv文件的节点名称为 “国家 | 城市 | 节点备注”
 import { connect } from 'cloudflare:sockets';
 let userID = '';
 let proxyIP = '';
@@ -9,7 +9,7 @@ let subProtocol = 'https';
 let subEmoji = 'true';
 let socks5Address = '';
 let parsedSocks5Address = {};
-let enableSocks = false;
+let enableSocks = false; 
 let noTLS = 'false';
 const expire = 4102329600;//2099-12-31
 let proxyIPs;
@@ -91,7 +91,7 @@ export default {
 			socks5s = await 整理(socks5Address);
 			socks5Address = socks5s[Math.floor(Math.random() * socks5s.length)];
 			socks5Address = socks5Address.split('//')[1] || socks5Address;
-			if (env.GO2SOCKS5) go2Socks5s = await 整理(env.GO2SOCKS5);
+			if (env.GO2SOCKS5) go2Socks5s = await 整理(env.GO2SOCKS5); 
 			if (env.CFPORTS) httpsPorts = await 整理(env.CFPORTS);
 			if (env.BAN) banHosts = await 整理(env.BAN);
 			if (socks5Address) {
@@ -156,7 +156,7 @@ export default {
 					if (env.URL302) return Response.redirect(env.URL302, 302);
 					else if (env.URL) return await 代理URL(env.URL, url);
 					else return new Response(JSON.stringify(request.cf, null, 4), {
-						status: 200,
+						status: 200, 
 						headers: {
 							'content-type': 'application/json',
 						},
@@ -1633,7 +1633,7 @@ async function 整理优选列表(api) {
 		clearTimeout(timeout);
 	}
 
-	const newAddressesapi = await 整理(newapi);
+	const newAddressesapi = await 整理(newapi); 
 
 	// 返回处理后的结果
 	return newAddressesapi;
@@ -1645,7 +1645,7 @@ async function 整理测速结果(tls) {
 	}
 
 	let newAddressescsv = [];
-        //rename = env.RENAME || rename;
+	//rename = env.RENAME || rename;
 	for (const csvUrl of addressescsv) {
 		try {
 			const response = await fetch(csvUrl);
