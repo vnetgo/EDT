@@ -46,7 +46,7 @@ jobs:
       # 步骤 4: 安装混淆工具
       - name: Install obfuscation tool
         run: |
-          npm install -g javascript-obfuscator 
+          npm install -g javascript-obfuscator
 
       # 步骤 5: 验证源文件是否存在
       - name: Verify source file exists
