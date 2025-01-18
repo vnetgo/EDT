@@ -55,27 +55,22 @@ jobs:
             echo "Error: Source file $SOURCE_FILE does not exist."
             exit 1
           fi
-
-      # 步骤 6: 对 $SOURCE_FILE 进行混淆加密并生成 $OUTPUT_FILE
+      # 步骤 6: 混淆原文件
       - name: Obfuscate ${{ env.SOURCE_FILE }}
         run: |
           javascript-obfuscator $SOURCE_FILE --output $OUTPUT_FILE \
           --compact true \
-          --control-flow-flattening true \
-          --control-flow-flattening-threshold 1 \
-          --dead-code-injection true \
-          --dead-code-injection-threshold 1 \
-          --identifier-names-generator hexadecimal \
-          --rename-globals true \
+          --control-flow-flattening false \
+          --dead-code-injection false \
+          --identifier-names-generator mangled \
           --string-array true \
-          --string-array-encoding 'rc4' \
-          --string-array-threshold 1 \
-          --transform-object-keys true \
-          --unicode-escape-sequence true
+          --string-array-encoding 'base64' \ 
+          --string-array-threshold 0.5 \
+          --unicode-escape-sequence false
           echo "已生成混淆后的 $OUTPUT_FILE 文件"
 
       # 步骤 7: 检查 $OUTPUT_FILE 是否更新
-      - name: Check if ${{ env.OUTPUT_FILE }} is updated
+      - name: Check if ${{ env.OUTPUT_FILE }} is updated 
         run: |
           git status
           ls -l $OUTPUT_FILE
