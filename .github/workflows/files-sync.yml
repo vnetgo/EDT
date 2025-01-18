@@ -35,8 +35,10 @@ jobs:
           git fetch upstream
 
       # 步骤 3: 检查上游目标文件是否存在并更新
-      - name: Check and update $FILE_TO_SYNC
+      - name: Check and update $FILE_TO_SYNC     
         run: |
+          export LC_ALL=C.UTF-8
+          export LANG=C.UTF-8
           # 检查上游文件是否存在
           if git ls-tree -r upstream/$UP_BRANCH --name-only | grep -q "^$FILE_TO_SYNC$"; then
             echo "文件 $FILE_TO_SYNC 存在于 $UP_REPO，开始比较内容差异..."
