@@ -1645,7 +1645,7 @@ async function 整理测速结果(tls) {
 	}
 
 	let newAddressescsv = [];
-        const rename = env.RENAME || rename
+        //rename = env.RENAME || rename;
 	for (const csvUrl of addressescsv) {
 		try {
 			const response = await fetch(csvUrl);
