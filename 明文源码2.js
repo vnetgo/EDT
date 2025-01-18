@@ -263,7 +263,7 @@ async function 维列斯OverWSHandler(request) {
 	// 接受 WebSocket 连接
 	webSocket.accept();
 
-	let address = '';
+	let address = ''; 
 	let portWithRandomLog = '';
 	// 日志函数，用于记录连接信息
 	const log = (/** @type {string} */ info, /** @type {string | undefined} */ event) => {
@@ -271,10 +271,8 @@ async function 维列斯OverWSHandler(request) {
 	};
 	// 获取早期数据头部，可能包含了一些初始化数据
 	const earlyDataHeader = request.headers.get('sec-websocket-protocol') || '';
-
 	// 创建一个可读的 WebSocket 流，用于接收客户端数据
-	const readableWebSocketStream = makeReadableWebSocketStream(webSocket, earlyDataHeader, log);
-
+	const readableWebSocketStream = makeReadableWebSocketStream(webSocket, earlyDataHeader, log); 
 	// 用于存储远程 Socket 的包装器
 	let remoteSocketWapper = {
 		value: null,
