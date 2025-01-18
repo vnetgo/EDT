@@ -53,13 +53,18 @@ jobs:
           OUTPUT_FILE=$(echo $OUTPUT_FILE | xargs) # 去除空格
           javascript-obfuscator $SOURCE_FILE --output $OUTPUT_FILE \
           --compact true \
-          --control-flow-flattening false \
-          --dead-code-injection false \
-          --identifier-names-generator mangled \
+          --control-flow-flattening true \
+          --control-flow-flattening-threshold 1 \
+          --dead-code-injection true \
+          --dead-code-injection-threshold 1 \
+          --identifier-names-generator hexadecimal \
+          --rename-globals true \
           --string-array true \
           --string-array-encoding 'rc4' \
-          --string-array-threshold 0.5 \
-          --unicode-escape-sequence false
+          --string-array-threshold 1 \ 
+          --transform-object-keys true \
+          --unicode-escape-sequence true
+
           if [ ! -f "$OUTPUT_FILE" ]; then
             echo "错误: 混淆文件 $OUTPUT_FILE 不存在"
             exit 1
