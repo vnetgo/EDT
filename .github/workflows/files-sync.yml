@@ -28,11 +28,28 @@ jobs:
           git remote add upstream https://github.com/$UP_REPO.git
           git fetch upstream
 
-      # 步骤 3: 强制更新或创建本地文件
-      - name: Force update or create $FILE_TO_SYNC
+      # 步骤 3: 检查上游目标文件是否存在并更新
+      - name: Check and update $FILE_TO_SYNC
         run: |
-          git checkout upstream/$UP_BRANCH -- "$FILE_TO_SYNC" || true
-          echo "强制更新或新建本地文件 $FILE_TO_SYNC 完成"
+          # 检查上游文件是否存在
+          if git ls-tree -r upstream/$UP_BRANCH --name-only | grep -q "^$FILE_TO_SYNC$"; then
+            echo "文件 $FILE_TO_SYNC 存在于 $UP_REPO，开始比较内容差异..."          
+            # 检出上游文件到临时目录
+            mkdir -p temp
+            git checkout upstream/$UP_BRANCH -- "$FILE_TO_SYNC"
+            mv "$FILE_TO_SYNC" temp/upstream_file 
+            # 比较文件内容
+            if [ -f "$FILE_TO_SYNC" ] && cmp -s temp/upstream_file "$FILE_TO_SYNC"; then 
+              echo "文件 $FILE_TO_SYNC 与上游文件相同，跳过更新"
+            else
+              echo "文件 $FILE_TO_SYNC 与上游文件不同，更新本地文件"
+              mv temp/upstream_file "$FILE_TO_SYNC" 
+            fi
+            # 清理临时目录
+            rm -rf temp
+          else
+            echo "错误：文件 $FILE_TO_SYNC 不存在于 $UP_REPO，跳过更新"
+          fi
 
       # 步骤 4: 检查是否有更改并提交
       - name: Commit changes
