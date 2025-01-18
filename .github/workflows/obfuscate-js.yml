@@ -51,7 +51,7 @@ jobs:
       - name: Obfuscate ${{ env.SOURCE_FILE }}
         run: |
           OUTPUT_FILE=$(echo "$OUTPUT_FILE" | xargs) # 去除空格
-          javascript-obfuscator $SOURCE_FILE --output "$OUTPUT_FILE" \
+          javascript-obfuscator "$SOURCE_FILE" --output "$OUTPUT_FILE" \
           --compact true \
           --control-flow-flattening true \
           --control-flow-flattening-threshold 0.5 \
@@ -62,7 +62,7 @@ jobs:
           --string-array true \
           --string-array-encoding 'rc4' \
           --string-array-threshold 1 \
-          --transform-object-keys true \ 
+          --transform-object-keys true \
           --unicode-escape-sequence true
 
           if [ ! -f "$OUTPUT_FILE" ]; then
