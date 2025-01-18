@@ -64,7 +64,7 @@ jobs:
           --dead-code-injection false \
           --identifier-names-generator mangled \
           --string-array true \
-          --string-array-encoding 'base64' \ 
+          --string-array-encoding 'base64' \ 
           --string-array-threshold 0.5 \
           --unicode-escape-sequence false
           echo "已生成混淆后的 $OUTPUT_FILE 文件"
