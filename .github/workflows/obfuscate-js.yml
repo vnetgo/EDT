@@ -32,30 +32,22 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
-  
-      # 步骤 3: 缓存 Node.js 模块
-      - name: Cache Node.js modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: 20
 
-      # 步骤 4: 安装混淆工具
+      # 步骤 3: 安装混淆工具
       - name: Install obfuscation tool
         run: |
           npm install -g javascript-obfuscator
 
-      # 步骤 5: 验证源文件是否存在
+      # 步骤 4: 验证源文件是否存在
       - name: Verify source file exists
         run: |
           if [ ! -f "$SOURCE_FILE" ]; then
             echo "Error: Source file $SOURCE_FILE does not exist."
             exit 1
           fi
-      # 步骤 6: 混淆原文件
+
+      # 步骤 5: 混淆原文件
       - name: Obfuscate ${{ env.SOURCE_FILE }}
         run: |
           javascript-obfuscator $SOURCE_FILE --output $OUTPUT_FILE \
@@ -69,18 +61,18 @@ jobs:
           --unicode-escape-sequence false
           echo "已生成混淆后的 $OUTPUT_FILE 文件"
 
-      # 步骤 7: 检查 $OUTPUT_FILE 是否更新
+      # 步骤 6: 检查 $OUTPUT_FILE 是否更新
       - name: Check if ${{ env.OUTPUT_FILE }} is updated 
         run: |
           git status
           ls -l $OUTPUT_FILE
 
-      # 步骤 8: 提交并推送更改
+      # 步骤 7: 提交并推送更改
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add $OUTPUT_FILE
+          git add $OUTPUT_FILE 
           if git diff --cached --quiet; then
             echo "没有可提交的更改"
           else
