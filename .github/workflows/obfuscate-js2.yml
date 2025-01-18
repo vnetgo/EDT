@@ -6,7 +6,7 @@ permissions:
 on:
   push:
     paths:
-      - 明文源码.js # 手动触发时的路径匹配
+      - 明文源码2.js # 手动触发时的路径匹配
   workflow_dispatch:
 
 jobs:
