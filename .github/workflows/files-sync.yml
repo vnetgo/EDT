@@ -18,6 +18,12 @@ jobs:
       FILE_TO_SYNC: 明文源码.js # 需要同步的文件
 
     steps:
+      # 设置 UTF-8 编码环境
+      - name: Set UTF-8 encoding
+        run: |
+          export LC_ALL=C.UTF-8
+          export LANG=C.UTF-8
+      
       # 步骤 1: 检出目标仓库
       - name: Checkout target repo
         uses: actions/checkout@v3
