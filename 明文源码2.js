@@ -85,7 +85,7 @@ export default {
 
 			proxyIP = env.PROXYIP || env.proxyip || proxyIP;
 			proxyIPs = await 整理(proxyIP);
-			proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
+			proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)]; 
 
 			socks5Address = env.SOCKS5 || socks5Address;
 			socks5s = await 整理(socks5Address);
@@ -434,7 +434,6 @@ async function handleTCPOutBound(remoteSocket, addressType, addressRemote, portR
 function makeReadableWebSocketStream(webSocketServer, earlyDataHeader, log) {
 	// 标记可读流是否已被取消
 	let readableStreamCancel = false;
-
 	// 创建一个新的可读流
 	const stream = new ReadableStream({
 		// 当流开始时的初始化函数
@@ -1650,7 +1649,7 @@ async function 整理测速结果(tls) {
 			const response = await fetch(csvUrl);
 
 			if (!response.ok) {
-				console.error('获取CSV地址时出错:', response.status, response.statusText);
+				console.error('获取CSV地址时出错:', response.status, response.statusText); 
 				continue;
 			}
 
