@@ -1662,7 +1662,6 @@ async function 整理测速结果(tls) {
 			// 检查CSV头部是否包含必需字段
 			const header = lines[0].split(',');
 			const tlsIndex = header.indexOf('TLS');
-
 			const ipAddressIndex = 0;// IP地址在 CSV 头部的位置
 			const portIndex = 1;// 端口在 CSV 头部的位置
 			//const dataCenterIndex = tlsIndex + remarkIndex; // 数据中心是 TLS 的后一个字段
@@ -1699,7 +1698,6 @@ async function 整理测速结果(tls) {
 			continue;
 		}
 	}
-
 	return newAddressescsv;
 }
 
