@@ -1403,6 +1403,7 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 				background-color: #f5f5f7;
 			td {
     			word-wrap: break-word; /* 让链接自动换行 */
+				overflow-wrap: break-word; /* 确保长单词或链接能够换行 */
   			}
 			.footer {
 				text-align: center;
@@ -1587,7 +1588,7 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 				<a href="https://blog.811520.xyz/" target="_blank" style="color: #666; text-decoration: none;">青云志博客</a>
 			</p>
 		</div>
-	
+		<script src="https://cdn.jsdelivr.net/npm/@keeex/qrcodejs-kx@1.0.2/qrcode.min.js"></script>
 		<script>
 			function copyToClipboard(text, qrcode) {
 				navigator.clipboard.writeText(text).then(() => {
@@ -2135,12 +2136,6 @@ async function KV(request, env, txt = 'ADD.txt') {
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<title>优选订阅列表</title>
 				<style>
-					h1 {
-					font-size: 36px;
-					color: #000;
-					text-align: center;
-					margin-top: 20px;
-					}
 					body {
 						font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 						margin: 0;
@@ -2157,9 +2152,10 @@ async function KV(request, env, txt = 'ADD.txt') {
 						box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 					}
 					h1 {
-						font-size: 24px;
-						margin-bottom: 20px;
+						font-size: 36px;
 						color: #000;
+						text-align: center;
+						margin-top: 20px;
 					}
 					.notice-toggle {
 						font-size: 1.6em;
