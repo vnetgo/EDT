@@ -1354,11 +1354,11 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 			if (env.KV) 判断是否绑定KV空间 = ` <a href='${_url.pathname}/edit'>编辑优选列表</a>`;
 			订阅器 += `<br>您的订阅内容由 内置 addresses/ADD* 参数变量提供${判断是否绑定KV空间}<br>`;
 			//if (addresses.length > 0) 订阅器 += `ADD（TLS优选域名&IP）: <br>&nbsp;&nbsp;${addresses.join('<br>&nbsp;&nbsp;')}<br>`;
+			//if (addressesnotls.length > 0) 订阅器 += `ADDNOTLS（noTLS优选域名&IP）: <br>&nbsp;&nbsp;${addressesnotls.join('<br>&nbsp;&nbsp;')}<br>`;
 			if (addressesapi.length === 0) {
 				if (addresses.length > 0) 订阅器 += `ADD（TLS优选域名&IP）: <br>&nbsp;&nbsp;${addresses.join('<br>&nbsp;&nbsp;')}<br>`;
 				if (addressesnotls.length > 0) 订阅器 += `ADDNOTLS（noTLS优选域名&IP）: <br>&nbsp;&nbsp;${addressesnotls.join('<br>&nbsp;&nbsp;')}<br>`;
 			}
-			if (addressesnotls.length > 0) 订阅器 += `ADDNOTLS（noTLS优选域名&IP）: <br>&nbsp;&nbsp;${addressesnotls.join('<br>&nbsp;&nbsp;')}<br>`;
 			if (addressesapi.length > 0) 订阅器 += `ADDAPI（TLS优选域名&IP 的 API）: <br>&nbsp;&nbsp;${addressesapi.join('<br>&nbsp;&nbsp;')}<br>`;
 			if (addressesnotlsapi.length > 0) 订阅器 += `ADDNOTLSAPI（noTLS优选域名&IP 的 API）: <br>&nbsp;&nbsp;${addressesnotlsapi.join('<br>&nbsp;&nbsp;')}<br>`;
 			if (addressescsv.length > 0) 订阅器 += `ADDCSV（IPTest测速csv文件 限速 ${DLS} ）: <br>&nbsp;&nbsp;${addressescsv.join('<br>&nbsp;&nbsp;')}<br>`;
@@ -1401,15 +1401,21 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 			}
 			th {
 				background-color: #f5f5f7;
-			td {
-    			word-wrap: break-word; /* 让链接自动换行 */
-				overflow-wrap: break-word; /* 确保长单词或链接能够换行 */
-  			}
+			}
+			th:nth-child(1), td:nth-child(1) {
+				white-space: nowrap;
+			}
+			th:nth-child(2), td:nth-child(2) {
+				word-wrap: break-word;
+				white-space: normal;
+			}			
 			.footer {
 				text-align: center;
 				margin-top: 30px;
 				font-size: 14px;
 				color: #666;
+				width: 100%;
+    			display: block;
 			}
 			.footer a {
 				color: #007aff;
@@ -1438,10 +1444,10 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 				margin-top: 10px;
 			}
 			#noticeToggle {
-    		font-size: 1.6em;
-    		font-weight: bold;
-    		margin: 10px 0;
-			text-decoration: none;
+    			font-size: 1.6em;
+    			font-weight: bold;
+    			margin: 10px 0;
+				text-decoration: none;
 			}
 		</style>
 	
@@ -1562,20 +1568,20 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 				</thead>
 				<tbody>
 					<tr>
-					<td>v2ray</td>
-					<td>
-						<a href="javascript:void(0)" onclick="copyToClipboard('${v2ray}', 'qrcode_v2ray')">${v2ray}</a>
-						<button class="copy-btn" onclick="copyToClipboard('${v2ray}', 'qrcode_v2ray')">点击复制</button>
-						<div id="qrcode_v2ray" class="qrcode-container"></div>
-					</td>
+						<td>v2ray</td>
+						<td>
+						    <a href="javascript:void(0)" onclick="copyToClipboard('${v2ray}', 'qrcode_v2ray')">${v2ray}</a>
+							<button class="copy-btn" onclick="copyToClipboard('${v2ray}', 'qrcode_v2ray')">点击复制</button>
+							<div id="qrcode_v2ray" class="qrcode-container"></div>
+						</td>
 					</tr>
 					<tr>
-					<td>Clash</td>
-					<td>
-						<a href="javascript:void(0)" onclick="copyToClipboard('${clash}', 'qrcode_clash')">${clash}</a>
-						<button class="copy-btn" onclick="copyToClipboard('${clash}', 'qrcode_clash')">点击复制</button>
-						<div id="qrcode_clash" class="qrcode-container"></div>
-					</td>
+						<td>Clash</td>
+						<td>
+							<a href="javascript:void(0)" onclick="copyToClipboard('${clash}', 'qrcode_clash')">${clash}</a>
+							<button class="copy-btn" onclick="copyToClipboard('${clash}', 'qrcode_clash')">点击复制</button>
+							<div id="qrcode_clash" class="qrcode-container"></div>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -1596,8 +1602,12 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 				}).catch(err => {
 					console.error('复制失败:', err);
 				});
+				generateQRCode(text, qrcode);
+			}
+
+			function generateQRCode(text, qrcode) {
 				const qrcodeDiv = document.getElementById(qrcode);
-				qrcodeDiv.innerHTML = '';
+				qrcodeDiv.innerHTML = ''; // 清空之前的二维码
 				new QRCode(qrcodeDiv, {
 					text: text,
 					width: 220, // 调整宽度
