@@ -1444,7 +1444,7 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 			}
 		</style>
 	
-		<h1>节点配置信息</h1>
+		<h1>${FileName} 订阅信息</h1>
 		<div class="container">
 			<h3>订阅地址</h3>
 			<table>
