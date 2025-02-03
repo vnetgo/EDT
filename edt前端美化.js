@@ -1588,7 +1588,7 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 			</table>
 		</div>
 		<div class="footer">
-			<p>© 订阅配置列表. All rights reserved. | 
+			<p>© EDT订阅配置页. All rights reserved. | 
 				<a href="https://t.me/CMLiussss" target="_blank" style="color: #666; text-decoration: none;">CM's TG</a> | 
 				<a href="https://github.com/cmliu/edgetunnel" target="_blank" style="color: #666; text-decoration: none;">CM's Github</a> | 
 				<a href="https://github.com/yutian81/edgetunnel-cmliu" target="_blank" style="color: #666; text-decoration: none;">yutian81's GitHub</a> | 
