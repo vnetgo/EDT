@@ -1579,9 +1579,8 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 					<tr>
 						<td>Clash</td>
 						<td>
-							<a href="javascript:void(0)" onclick="copyToClipboard('${clash}', 'qrcode_clash')">${clash}</a>
-							<button class="copy-btn" onclick="copyToClipboard('${clash}', 'qrcode_clash')">点击复制</button>
-							<div id="qrcode_clash" class="qrcode-container"></div>
+							<span>内容过长，请手动复制，并添加到 clash 配置文件的 proxies 代理组</span>
+							<textarea rows="4" cols="50" readonly style="width: 100%;">${clash}</textarea>
 						</td>
 					</tr>
 				</tbody>
@@ -1598,50 +1597,25 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 		<script src="https://cdn.jsdelivr.net/npm/@keeex/qrcodejs-kx@1.0.2/qrcode.min.js"></script>
 		<script>
 			function copyToClipboard(text, qrcode) {
-				if (!text) {
-					console.error('Text is empty');
-					return;
-				}
-				if (navigator.clipboard) {
-					navigator.clipboard.writeText(text).then(() => {
-						alert('已复制到剪贴板');
-					}).catch(err => {
-						console.error('复制失败:', err);
-					});
-				} else {
-					const textarea = document.createElement('textarea');
-					textarea.value = text;
-					document.body.appendChild(textarea);
-					textarea.select();
-					try {
-						document.execCommand('copy');
-						alert('已复制到剪贴板');
-					} catch (err) {
-						console.error('复制失败:', err);
-					}
-					document.body.removeChild(textarea);
-				}
+				navigator.clipboard.writeText(text).then(() => {
+					alert('已复制到剪贴板');
+				}).catch(err => {
+					console.error('复制失败:', err);
+				});
 				generateQRCode(text, qrcode);
 			}
 
 			function generateQRCode(text, qrcode) {
-				if (!text) {
-					console.error('Text is empty');
-					return;
-				}
 				const qrcodeDiv = document.getElementById(qrcode);
-				if (!qrcodeDiv) {
-					console.error('QR Code container not found:', qrcode);
-					return;
-				}
-				qrcodeDiv.innerHTML = '';
+				qrcodeDiv.innerHTML = ''; // 清空之前的二维码
 				new QRCode(qrcodeDiv, {
 					text: text,
-					width: 220,
-					height: 220,
-					colorDark: "#000000",
-					colorLight: "#ffffff",
-					correctLevel: QRCode.CorrectLevel.Q
+					width: 220, // 调整宽度
+					height: 220, // 调整高度
+					colorDark: "#000000", // 二维码颜色
+					colorLight: "#ffffff", // 背景颜色
+					correctLevel: QRCode.CorrectLevel.Q, // 设置纠错级别
+					scale: 1 // 调整像素颗粒度
 				});
 			}
 	
