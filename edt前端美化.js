@@ -1,5 +1,4 @@
-// 修改1：格式为csv文件的节点名称为 “国家 | 城市 | 节点备注”
-// 修改2：美化订阅信息前端页面
+// 修改：格式为csv文件的节点名称为 “国家 | 城市 | 节点备注”
 import { connect } from 'cloudflare:sockets';
 let userID = '';
 let proxyIP = '';
@@ -1581,6 +1580,7 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 						<td>Clash</td>
 						<td>
 							<span>内容过长，请手动复制，并添加到 clash 配置文件的 proxies 代理组</span>
+							<br>
 							<textarea rows="4" cols="50" readonly style="width: 100%;">${clash}</textarea>
 						</td>
 					</tr>
