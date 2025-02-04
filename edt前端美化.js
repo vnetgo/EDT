@@ -1,4 +1,5 @@
-// 修改：格式为csv文件的节点名称为 “国家 | 城市 | 节点备注”
+// 修改1：格式为csv文件的节点名称为 “国家 | 城市 | 节点备注”
+// 修改2：美化订阅信息前端页面
 import { connect } from 'cloudflare:sockets';
 let userID = '';
 let proxyIP = '';
@@ -1452,7 +1453,7 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 			}
 		</style>
 	
-		<h1>${FileName} 订阅信息</h1>
+		<h1>EDT订阅信息概览</h1>
 		<div class="container">
 			<h3>订阅地址</h3>
 			<table>
@@ -1587,13 +1588,14 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 			</table>
 		</div>
 		<div class="footer">
-			<p>© EDT订阅配置页. All rights reserved. | 
+			<p>© EDT订阅信息概览. All rights reserved. | 
 				<a href="https://t.me/CMLiussss" target="_blank" style="color: #666; text-decoration: none;">CM's TG</a> | 
 				<a href="https://github.com/cmliu/edgetunnel" target="_blank" style="color: #666; text-decoration: none;">CM's Github</a> | 
 				<a href="https://github.com/yutian81/edgetunnel-cmliu" target="_blank" style="color: #666; text-decoration: none;">yutian81's GitHub</a> | 
 				<a href="https://blog.811520.xyz/" target="_blank" style="color: #666; text-decoration: none;">青云志博客</a>
 			</p>
 		</div>
+
 		<script src="https://cdn.jsdelivr.net/npm/@keeex/qrcodejs-kx@1.0.2/qrcode.min.js"></script>
 		<script>
 			function copyToClipboard(text, qrcode) {
@@ -2245,7 +2247,7 @@ async function KV(request, env, txt = 'ADD.txt') {
 				</style>
 			</head>
 			<body>
-				<h1>优选订阅列表</h1>
+				<h1>EDT订阅优选列表</h1>
 				<div class="container">
 					<a href="javascript:void(0);" class="notice-toggle" onclick="toggleNotice()">注意事项 🔽</a>
 					<div id="noticeContent" class="notice-content">
@@ -2264,15 +2266,15 @@ async function KV(request, env, txt = 'ADD.txt') {
 						<br>
 						` : '<p>未绑定KV空间</p>'}
 					</div>
-					<div class="footer">
-						<p>© 优选订阅列表. All rights reserved. | 
-							<a href="https://t.me/CMLiussss" target="_blank" style="color: #666; text-decoration: none;">CM's TG</a> | 
-							<a href="https://github.com/cmliu/edgetunnel" target="_blank" style="color: #666; text-decoration: none;">CM's Github</a> | 
-							<a href="https://github.com/yutian81/edgetunnel-cmliu" target="_blank" style="color: #666; text-decoration: none;">yutian81's GitHub</a> | 
-							<a href="https://blog.811520.xyz/" target="_blank" style="color: #666; text-decoration: none;">青云志博客</a>
-						</p>
-					</div>
 				</div>
+				<div class="footer">
+					<p>© EDT订阅优选列表. All rights reserved. | 
+						<a href="https://t.me/CMLiussss" target="_blank" style="color: #666; text-decoration: none;">CM's TG</a> | 
+						<a href="https://github.com/cmliu/edgetunnel" target="_blank" style="color: #666; text-decoration: none;">CM's Github</a> | 
+						<a href="https://github.com/yutian81/edgetunnel-cmliu" target="_blank" style="color: #666; text-decoration: none;">yutian81's GitHub</a> | 
+						<a href="https://blog.811520.xyz/" target="_blank" style="color: #666; text-decoration: none;">青云志博客</a>
+					</p>
+				</div>				
 
 				<script>
 					function toggleNotice() {
