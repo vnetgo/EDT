@@ -1375,6 +1375,13 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 		const 动态UUID信息 = (uuid != userID) ? `TOKEN: ${uuid}<br>UUIDNow: ${userID}<br>UUIDLow: ${userIDLow}<br>${userIDTime}TIME（动态UUID有效时间）: ${有效时间} 天<br>UPTIME（动态UUID更新时间）: ${更新时间} 时（北京时间）<br>` : `${userIDTime}`;
 		const 节点配置页 = `
 		<style>
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+				margin: 0;
+				padding: 20px;
+				background-color: #f5f5f7;
+				color: #333;
+			}
 			.container {
 				max-width: 900px;
 				margin: 0 auto;
