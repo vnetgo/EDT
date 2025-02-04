@@ -1,4 +1,10 @@
-// 修改：格式为csv文件的节点名称为 “国家 | 城市 | 节点备注”
+// 修改1：格式为csv文件的节点名称为 “国家 | 城市 | 节点备注”
+// 修改2：美化前端配置页面
+// 注意：如果你的测速csv文件不是由此测速软件（https://github.com/bh-qt/Cloudflare-IP-SpeedTest）生成，请使用原版edt项目
+// 或者按照我的教程（https://blog.811520.xyz/post/2024/12/cmedt-name/）修改原版edt
+// 也可以直接使用我修改好的美化js文件：https://github.com/yutian81/edgetunnel-cmliu/edit/main/edt前端美化.js
+// 部署前需要先混淆加密，否则会报11-01，混淆教程：https://blog.811520.xyz/post/2024/12/cmedt-hunxiao/
+
 import { connect } from 'cloudflare:sockets';
 let userID = '';
 let proxyIP = '';
@@ -1579,7 +1585,7 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 					<tr>
 						<td>Clash</td>
 						<td>
-							<span>内容过长，请手动复制，并添加到 clash 配置文件的 proxies 代理组</span>
+							<div>内容过长，请手动复制，并添加到 clash 配置文件的 proxies 代理组</div>
 							<br>
 							<textarea rows="4" cols="50" readonly style="width: 100%;">${clash}</textarea>
 						</td>
