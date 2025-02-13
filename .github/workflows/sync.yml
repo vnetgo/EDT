@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: vnetgo/edt
+          token: ${{ secrets.PAT }} # 使用 PAT 访问目标仓库
           path: target
           fetch-depth: 0 # 禁用浅克隆，拉取完整历史
 
@@ -24,6 +25,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: yutian81/edgetunnel-cmliu
+          token: ${{ secrets.PAT }} # 使用 PAT 访问目标仓库
           path: source
           fetch-depth: 0 # 禁用浅克隆，拉取完整历史
 
