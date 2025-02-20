@@ -48,49 +48,58 @@ const tools = {
   },
 
   // 查询IP信息，返回国家代码和org组织名
+  async domainToIP(domain) {
+    const dnsapi = [
+      `https://223.5.5.5/resolve?name=${domain}`,
+      `https://dns.google/resolve?name=${domain}`
+    ];
+    for (const url of dnsapi) {
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) continue;
+        const data = await resp.json();
+        if (!data?.Answer || !Array.isArray(data.Answer)) continue;
+        const aRecord = data.Answer.find(record => record.type === 1);
+        if (aRecord?.data) {
+          return { ip: aRecord.data };
+        }
+      } catch (err) {
+        console.error(`请求 ${url} 失败:`, err);
+        continue;
+      }
+    }
+    return { ip: '未知' };
+  },
+  
+  // 查询IP信息，返回国家代码和org组织名
   async parseIPInfo(ip) {
     const ipapi = [
       `https://ip.eooce.com/${ip}`,
       `https://ipinfo.io/${ip}/json`
     ];
-    let data;
-  
-    try {
-      const resp = await fetch(ipapi[0]);
-      if (resp.ok) {
-        data = await resp.json();
-        if (!data.country_code || !data.organization) {
-          throw new Error('数据缺失，使用第二个 API');
-        }
-      }
-    } catch (err) {
-      console.error(`请求 ${ipapi[0]} 失败:`, err);
-    }
-
-    if (!data) {
-      try {
-        const resp = await fetch(ipapi[1]);
-        if (resp.ok) {
-          data = await resp.json();
-        }
-      } catch (err) {
-        console.error(`请求 ${ipapi[1]} 失败:`, err);
+    
+    const results = await Promise.allSettled(ipapi.map(url =>
+      fetch(url)
+        .then(resp => resp.ok ? resp.json() : Promise.reject(`请求 ${url} 失败`))
+        .catch(err => (console.error(err), null)) 
+    ));
+    
+    let finalCountry = null, finalOrg = null;
+    for (const [i, result] of results.entries()) {
+      if (result.status === "fulfilled" && result.value) {
+        const data = result.value;
+        let country = i === 0 ? data.country_code : data.country;
+        let org = i === 0 ? data.organization : data.org;
+        if (org) org = i === 0 ? org.split(/[-,]/)[0].trim() : org.replace(/^AS\d+\s*/, "");
+        if (country && org) return { country, org };
+        finalCountry ||= country;
+        finalOrg ||= org;
       }
     }
-
-    if (data) {
-      let org = data.organization || data.org || '';
-      org = org.split(/[-,]/)[0].trim();
-      org = org.replace(/^AS\d+\s*/, '');
-      return {
-        country: data.country_code || data.country || '未知国家',
-        org: org || '未知'
-      };
-    }
   
-    return { country: '未知国家', org: '未知' };
+    return { country: finalCountry || "未知国家", org: finalOrg || "未知" };
   },
-
+  
   // 获取国家代码的 emoji
   getFlagEmoji(countryCode) {
     if (!countryCode || countryCode.length !== 2 || !/^[A-Za-z]{2}$/.test(countryCode)) {
@@ -277,7 +286,7 @@ function frontendPage(env) {
       }
       textarea#input {
         width: calc(100% - 25px);
-        height: 80px; /* 减小 input 文本框的高度 */
+        height: 80px;
         margin: 8px 0;
         background: rgba(255,255,255,0.5);
         border: 1px solid rgba(0,0,0,0.2);
@@ -288,7 +297,7 @@ function frontendPage(env) {
       }
       textarea#output {
         width: calc(100% - 25px);
-        height: 150px; /* 加高 output 文本框的高度 */
+        height: 150px;
         margin: 8px 0;
         background: rgba(255,255,255,0.5);
         border: 1px solid rgba(0,0,0,0.2);
@@ -316,14 +325,14 @@ function frontendPage(env) {
         background: #28a745;
       }
       footer {
-        text-align: center; /* 版权信息居中显示 */
-        color: #aaa; /* 文字颜色为灰白色 */
-        font-size: 12px; /* 字号 12px */
+        text-align: center;
+        color: #aaa;
+        font-size: 12px;
         margin-top: 20px;
       }
       footer a {
-        text-decoration: none; /* 不显示链接下划线 */
-        color: #aaa; /* 文字颜色为灰白色 */
+        text-decoration: none;
+        color: #aaa;
       }
       @media (max-width: 600px) {
         body { padding: 10px; }
