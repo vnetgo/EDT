@@ -48,30 +48,6 @@ const tools = {
   },
 
   // 查询IP信息，返回国家代码和org组织名
-  async domainToIP(domain) {
-    const dnsapi = [
-      `https://223.5.5.5/resolve?name=${domain}`,
-      `https://dns.google/resolve?name=${domain}`
-    ];
-    for (const url of dnsapi) {
-      try {
-        const resp = await fetch(url);
-        if (!resp.ok) continue;
-        const data = await resp.json();
-        if (!data?.Answer || !Array.isArray(data.Answer)) continue;
-        const aRecord = data.Answer.find(record => record.type === 1);
-        if (aRecord?.data) {
-          return { ip: aRecord.data };
-        }
-      } catch (err) {
-        console.error(`请求 ${url} 失败:`, err);
-        continue;
-      }
-    }
-    return { ip: '未知' };
-  },
-  
-  // 查询IP信息，返回国家代码和org组织名
   async parseIPInfo(ip) {
     const ipapi = [
       `https://ip.eooce.com/${ip}`,
