@@ -53,23 +53,41 @@ const tools = {
       `https://ip.eooce.com/${ip}`,
       `https://ipinfo.io/${ip}/json`
     ];
-    for (const url of ipapi) {
+    let data;
+  
+    try {
+      const resp = await fetch(ipapi[0]);
+      if (resp.ok) {
+        data = await resp.json();
+        if (!data.country_code || !data.organization) {
+          throw new Error('数据缺失，使用第二个 API');
+        }
+      }
+    } catch (err) {
+      console.error(`请求 ${ipapi[0]} 失败:`, err);
+    }
+
+    if (!data) {
       try {
-        const resp = await fetch(url);
-        if (!resp.ok) continue;
-        const data = await resp.json();
-        let org = data.organization || data.org || '';
-        org = org.split(/[-,]/)[0].trim();
-        org = org.replace(/^AS\d+\s*/, '');
-        return {
-          country: data.country_code || data.country || '未知国家',
-          org: org || '未知'
-        };
+        const resp = await fetch(ipapi[1]);
+        if (resp.ok) {
+          data = await resp.json();
+        }
       } catch (err) {
-        console.error(`请求 ${url} 失败:`, err);
-        continue;
+        console.error(`请求 ${ipapi[1]} 失败:`, err);
       }
     }
+
+    if (data) {
+      let org = data.organization || data.org || '';
+      org = org.split(/[-,]/)[0].trim();
+      org = org.replace(/^AS\d+\s*/, '');
+      return {
+        country: data.country_code || data.country || '未知国家',
+        org: org || '未知'
+      };
+    }
+  
     return { country: '未知国家', org: '未知' };
   },
 
@@ -259,7 +277,7 @@ function frontendPage(env) {
       }
       textarea#input {
         width: calc(100% - 25px);
-        height: 80px;
+        height: 80px; /* 减小 input 文本框的高度 */
         margin: 8px 0;
         background: rgba(255,255,255,0.5);
         border: 1px solid rgba(0,0,0,0.2);
@@ -270,7 +288,7 @@ function frontendPage(env) {
       }
       textarea#output {
         width: calc(100% - 25px);
-        height: 150px;
+        height: 150px; /* 加高 output 文本框的高度 */
         margin: 8px 0;
         background: rgba(255,255,255,0.5);
         border: 1px solid rgba(0,0,0,0.2);
@@ -298,14 +316,14 @@ function frontendPage(env) {
         background: #28a745;
       }
       footer {
-        text-align: center;
-        color: #aaa;
-        font-size: 12px;
+        text-align: center; /* 版权信息居中显示 */
+        color: #aaa; /* 文字颜色为灰白色 */
+        font-size: 12px; /* 字号 12px */
         margin-top: 20px;
       }
       footer a {
-        text-decoration: none;
-        color: #aaa;
+        text-decoration: none; /* 不显示链接下划线 */
+        color: #aaa; /* 文字颜色为灰白色 */
       }
       @media (max-width: 600px) {
         body { padding: 10px; }
