@@ -12,7 +12,7 @@ export default {
   }
 };
 
-// 工具函数模块
+// 工具函数
 const tools = {
   base64: {
     encode: (str) => {
@@ -23,59 +23,108 @@ const tools = {
     }
   },
 
+  // 缓存对象
+  _dnsCache: new Map(),
+  _ipInfoCache: new Map(),
+
   // 将域名解析为IP
   async domainToIP(domain) {
+    if (this._dnsCache.has(domain)) {
+      return this._dnsCache.get(domain);
+    }
     const dnsapi = [
-      `https://223.5.5.5/resolve?name=${domain}`,
-      `https://dns.google/resolve?name=${domain}`
+      {
+        url: `https://223.5.5.5/resolve?name=${domain}`,
+        type: 'aliyun',
+        parser: data => (data.Answer ? data.Answer.find(r => [1, 28].includes(r.type))?.data : null)
+      },
+      {
+        url: `https://cloudflare-dns.com/dns-query?name=${domain}&type=A`,
+        headers: { 'Accept': 'application/dns-json' },
+        type: 'cloudflare',
+        parser: data => (data.Answer ? data.Answer.find(r => r.type === 1)?.data : null)
+      }
     ];
-    for (const url of dnsapi) {
+
+    let ip = null, source = null;
+    for (const api of dnsapi) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1000);
       try {
-        const resp = await fetch(url);
-        if (!resp.ok) continue;
-        const data = await resp.json();
-        if (!data?.Answer || !Array.isArray(data.Answer)) continue;
-        const aRecord = data.Answer.find(record => record.type === 1);
-        if (aRecord?.data) {
-          return { ip: aRecord.data };
-        }
+        const response = await fetch(api.url, {
+          headers: api.headers || {},
+          signal: controller.signal
+        });
+        if (!response.ok) continue;
+        const data = await response.json();
+        const parsedIP = api.parser(data);
+        ip ||= parsedIP;
+        source ||= parsedIP ? api.type : null;
+        if (ip) break;
       } catch (err) {
-        console.error(`请求 ${url} 失败:`, err);
-        continue;
+        if (err.name !== 'AbortError') {
+          console.error(`DNS异常追踪 ${new Date().toISOString()}`, {
+            service: api.type, domain, error: err.message
+          });
+        }
+      } finally {
+        clearTimeout(timeoutId);
       }
     }
-    return { ip: '未知' };
+    const result = { ip: ip || "未知", source: source || "none" };
+    this._dnsCache.set(domain, result);
+    return result;
   },
 
   // 查询IP信息，返回国家代码和org组织名
   async parseIPInfo(ip) {
+    if (this._ipInfoCache.has(ip)) {
+      return this._ipInfoCache.get(ip);
+    }
     const ipapi = [
-      `https://ip.eooce.com/${ip}`,
-      `https://ipinfo.io/${ip}/json`
+      {
+        url: `https://ip.eooce.com/${ip}`,
+        parser: data => ({
+          country: data.country_code || null,
+          org: data.organization ? data.organization.split(/[\s,-]+/)[0] : null
+        })
+      },
+      {
+        url: `https://ipinfo.io/${ip}/json`,
+        parser: data => ({
+          country: data.country || null,
+          org: data.org ? data.org.replace(/^AS\d+\s+/, "").split(/\s+/)[0] : null
+        })
+      }
     ];
-    
-    const results = await Promise.allSettled(ipapi.map(url =>
-      fetch(url)
-        .then(resp => resp.ok ? resp.json() : Promise.reject(`请求 ${url} 失败`))
-        .catch(err => (console.error(err), null)) 
-    ));
-    
-    let finalCountry = null, finalOrg = null;
-    for (const [i, result] of results.entries()) {
-      if (result.status === "fulfilled" && result.value) {
-        const data = result.value;
-        let country = i === 0 ? data.country_code : data.country;
-        let org = i === 0 ? data.organization : data.org;
-        if (org) org = i === 0 ? org.split(/[-,]/)[0].trim() : org.replace(/^AS\d+\s*/, "");
-        if (country && org) return { country, org };
-        finalCountry ||= country;
-        finalOrg ||= org;
+
+    let country = null, org = null;
+    for (const api of ipapi) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1000);
+      try {
+        const response = await fetch(api.url, { signal: controller.signal });
+        if (!response.ok) continue;
+        const data = await response.json();
+        const parsed = api.parser(data);
+        country ||= parsed.country;
+        org ||= parsed.org;
+        if (country && org) break;
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.error(`IP API 请求失败 ${new Date().toISOString()}`, {
+            ip, error: err.message
+          });
+        }
+      } finally {
+        clearTimeout(timeoutId);
       }
     }
-  
-    return { country: finalCountry || "未知国家", org: finalOrg || "未知" };
+    const result = { country: country || "未知国家", org: org || "未知" };
+    this._ipInfoCache.set(ip, result);
+    return result;
   },
-  
+
   // 获取国家代码的 emoji
   getFlagEmoji(countryCode) {
     if (!countryCode || countryCode.length !== 2 || !/^[A-Za-z]{2}$/.test(countryCode)) {
@@ -128,9 +177,9 @@ async function handleSubRequest(request, env) {
 
   if (request.method === 'POST') {
       rawlinks = decodeURIComponent(path).split('\n');
-      useFlag = request.headers.get('X-Flag') === 'true';
-      useSuffix = request.headers.get('X-Suffix') === 'true';
-      useOrg = request.headers.get('X-Org') === 'true';
+      useFlag = request.headers.get('x-flag') === 'true';
+      useSuffix = request.headers.get('x-suffix') === 'true';
+      useOrg = request.headers.get('x-org') === 'true';
   } else if (request.method === 'GET') {
       rawlinks = [decodeURIComponent(path + url.search + url.hash)];
       useFlag = true;
@@ -183,7 +232,12 @@ async function handleSubRequest(request, env) {
 
   const subContent = tools.base64.encode(processed.filter(l => l).join('\n'));
   return new Response(subContent, {
-    headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST',
+      'Access-Control-Allow-Headers': 'x-flag, x-suffix, x-org'
+    }
   });
 }
 
@@ -199,25 +253,24 @@ async function processVmess(link, env, useFlag, useSuffix, useOrg) {
     decoded.ps = newName;
     return `${prefix}://${tools.base64.encode(JSON.stringify(decoded))}`;
   } catch (error) {
-    console.error(`处理 vmess 链接 ${link} 时出错:`, error);
+    console.error(`处理链接 ${link} 时出错:`, error);
     return link;
   }
 }
 
 // 处理其他协议
 async function processOther(link, env, useFlag, useSuffix, useOrg) {
-  const urlObj = new URL(link);
-  const ipMatch = urlObj.href.match(/@(\[.*?\]|[^:?]+)/);
-  const add = ipMatch ? ipMatch[1] : null;
-  if (!add) return link;
+  const [prefix, addportAndname] = link.split('@');
+  const [addport] = addportAndname.split('#');
+  if (!addport) return link;
+  const [add] = addport.split(":");
   try {
-      const { country, org } = await domainORip(add);
-      const newName = newNodeName(country, org, env, useFlag, useSuffix, useOrg);
-      urlObj.hash = newName;
-      return urlObj.toString();
+    const { country, org } = await domainORip(add);
+    const newName = newNodeName(country, org, env, useFlag, useSuffix, useOrg);
+    return `${prefix}@${addport}#${newName}`;
   } catch (error) {
-      console.error(`处理链接 ${link} 时出错:`, error);
-      return link;
+    console.error(`处理链接 ${link} 时出错:`, error);
+    return link;
   }
 }
 
@@ -346,9 +399,9 @@ function frontendPage(env) {
           const resp = await fetch('/sub/' + encodeURIComponent(input), {
             method: 'POST',
             headers: {
-              'X-Flag': useFlag,
-              'X-Suffix': useSuffix,
-              'X-Org': useOrg
+              'x-flag': useFlag,
+              'x-suffix': useSuffix,
+              'x-org': useOrg
             }
           });
           if (!resp.ok) throw new Error(\`请求失败，状态码: \${resp.status}\`);
