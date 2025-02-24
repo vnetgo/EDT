@@ -385,7 +385,7 @@ function frontendPage(env) {
     </div>
     <footer>
       Copyright © 2025 Yutian81  |   
-      <a href="https://github.com/yutian81/vps-check" target="_blank">GitHub Repository</a>  |  
+      <a href="https://github.com/yutian81/edgetunnel-cmliu/tree/main/format-name" target="_blank">GitHub Repository</a>  |  
       <a href="https://blog.811520.xyz/" target="_blank">青云志博客</a>
     </footer>
 
