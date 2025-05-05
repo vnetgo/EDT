@@ -1,15 +1,16 @@
-// 修改：格式为csv文件的节点名称为 “国家 | 城市 | 节点备注”
+
 import { connect } from 'cloudflare:sockets';
+
 let userID = '';
 let proxyIP = '';
 //let sub = '';
-let subConverter = 'SUBAPI.fxxk.dedyn.io';
-let subConfig = "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Mini_MultiMode.ini";
+let subConverter = atob('U1VCQVBJLkNNTGl1c3Nzcy5uZXQ=');
+let subConfig = atob('aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FDTDRTU1IvQUNMNFNTUi9tYXN0ZXIvQ2xhc2gvY29uZmlnL0FDTDRTU1JfT25saW5lX01pbmlfTXVsdGlNb2RlLmluaQ==');
 let subProtocol = 'https';
 let subEmoji = 'true';
 let socks5Address = '';
 let parsedSocks5Address = {};
-let enableSocks = false; 
+let enableSocks = false;
 let noTLS = 'false';
 const expire = 4102329600;//2099-12-31
 let proxyIPs;
@@ -26,6 +27,7 @@ let addressesnotls = [];
 let addressesnotlsapi = [];
 let addressescsv = [];
 let DLS = 8;
+// 新增 rename、countrynum、citynum变量
 let rename = 'CF反代';
 let countrynum = 4;
 let citynum = 5;
@@ -36,6 +38,7 @@ let ChatID;
 let proxyhosts = [];
 let proxyhostsURL = '';
 let RproxyIP = 'false';
+const httpPorts = ["8080", "8880", "2052", "2082", "2086", "2095"];
 let httpsPorts = ["2053", "2083", "2087", "2096", "8443"];
 let 有效时间 = 7;
 let 更新时间 = 3;
@@ -85,13 +88,13 @@ export default {
 
 			proxyIP = env.PROXYIP || env.proxyip || proxyIP;
 			proxyIPs = await 整理(proxyIP);
-			proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)]; 
+			proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
 
 			socks5Address = env.SOCKS5 || socks5Address;
 			socks5s = await 整理(socks5Address);
 			socks5Address = socks5s[Math.floor(Math.random() * socks5s.length)];
 			socks5Address = socks5Address.split('//')[1] || socks5Address;
-			if (env.GO2SOCKS5) go2Socks5s = await 整理(env.GO2SOCKS5); 
+			if (env.GO2SOCKS5) go2Socks5s = await 整理(env.GO2SOCKS5);
 			if (env.CFPORTS) httpsPorts = await 整理(env.CFPORTS);
 			if (env.BAN) banHosts = await 整理(env.BAN);
 			if (socks5Address) {
@@ -118,9 +121,10 @@ export default {
 				if (env.ADDNOTLSAPI) addressesnotlsapi = await 整理(env.ADDNOTLSAPI);
 				if (env.ADDCSV) addressescsv = await 整理(env.ADDCSV);
 				DLS = Number(env.DLS) || DLS;
-				rename = env.RENAME || rename;
+				// 新增 rename、countrynum、citynum变量
+                rename = env.RENAME || rename;
 				countrynum = parseInt(env.COUNTRYNUM || countrynum, 10);
-				citynum = parseInt(env.CITYNUM || citynum, 10);
+				citynum = parseInt(env.CITYNUM || citynum, 10);           
 				// remarkIndex = Number(env.CSVREMARK) || remarkIndex;
 				BotToken = env.TGTOKEN || BotToken;
 				ChatID = env.TGID || ChatID;
@@ -141,13 +145,13 @@ export default {
 				if (url.searchParams.has('notls')) noTLS = 'true';
 
 				if (url.searchParams.has('proxyip')) {
-					path = `/?ed=2560&proxyip=${url.searchParams.get('proxyip')}`;
+					path = `/proxyip=${url.searchParams.get('proxyip')}`;
 					RproxyIP = 'false';
 				} else if (url.searchParams.has('socks5')) {
-					path = `/?ed=2560&socks5=${url.searchParams.get('socks5')}`;
+					path = `/?socks5=${url.searchParams.get('socks5')}`;
 					RproxyIP = 'false';
 				} else if (url.searchParams.has('socks')) {
-					path = `/?ed=2560&socks5=${url.searchParams.get('socks')}`;
+					path = `/?socks5=${url.searchParams.get('socks')}`;
 					RproxyIP = 'false';
 				}
 
@@ -156,7 +160,7 @@ export default {
 					if (env.URL302) return Response.redirect(env.URL302, 302);
 					else if (env.URL) return await 代理URL(env.URL, url);
 					else return new Response(JSON.stringify(request.cf, null, 4), {
-						status: 200, 
+						status: 200,
 						headers: {
 							'content-type': 'application/json',
 						},
@@ -180,7 +184,7 @@ export default {
 					let total = 24 * 1099511627776;
 
 					if (userAgent && userAgent.includes('mozilla')) {
-						return new Response(`<div style="font-size:13px;">${维列斯Config}</div>`, {
+						return new Response(维列斯Config, {
 							status: 200,
 							headers: {
 								"Content-Type": "text/html;charset=utf-8",
@@ -190,11 +194,11 @@ export default {
 							}
 						});
 					} else {
-						return new Response(`${维列斯Config}`, {
+						return new Response(维列斯Config, {
 							status: 200,
 							headers: {
 								"Content-Disposition": `attachment; filename=${FileName}; filename*=utf-8''${encodeURIComponent(FileName)}`,
-								"Content-Type": "text/plain;charset=utf-8",
+								//"Content-Type": "text/plain;charset=utf-8",
 								"Profile-Update-Interval": "6",
 								"Subscription-Userinfo": `upload=${pagesSum}; download=${workersSum}; total=${total}; expire=${expire}`,
 							}
@@ -263,7 +267,7 @@ async function 维列斯OverWSHandler(request) {
 	// 接受 WebSocket 连接
 	webSocket.accept();
 
-	let address = ''; 
+	let address = '';
 	let portWithRandomLog = '';
 	// 日志函数，用于记录连接信息
 	const log = (/** @type {string} */ info, /** @type {string | undefined} */ event) => {
@@ -271,8 +275,10 @@ async function 维列斯OverWSHandler(request) {
 	};
 	// 获取早期数据头部，可能包含了一些初始化数据
 	const earlyDataHeader = request.headers.get('sec-websocket-protocol') || '';
+
 	// 创建一个可读的 WebSocket 流，用于接收客户端数据
-	const readableWebSocketStream = makeReadableWebSocketStream(webSocket, earlyDataHeader, log); 
+	const readableWebSocketStream = makeReadableWebSocketStream(webSocket, earlyDataHeader, log);
+
 	// 用于存储远程 Socket 的包装器
 	let remoteSocketWapper = {
 		value: null,
@@ -397,10 +403,10 @@ async function handleTCPOutBound(remoteSocket, addressType, addressRemote, portR
 		} else {
 			// 否则，尝试使用预设的代理 IP（如果有）或原始地址重试连接
 			if (!proxyIP || proxyIP == '') {
-				proxyIP = atob(`UFJPWFlJUC50cDEuZnh4ay5kZWR5bi5pbw==`);
+				proxyIP = atob('UFJPWFlJUC50cDEuMDkwMjI3Lnh5eg==');
 			} else if (proxyIP.includes(']:')) {
 				portRemote = proxyIP.split(']:')[1] || portRemote;
-				proxyIP = proxyIP.split(']:')[0] || proxyIP;
+				proxyIP = proxyIP.split(']:')[0] + "]" || proxyIP;
 			} else if (proxyIP.split(':').length === 2) {
 				portRemote = proxyIP.split(':')[1] || portRemote;
 				proxyIP = proxyIP.split(':')[0] || proxyIP;
@@ -432,6 +438,7 @@ async function handleTCPOutBound(remoteSocket, addressType, addressRemote, portR
 function makeReadableWebSocketStream(webSocketServer, earlyDataHeader, log) {
 	// 标记可读流是否已被取消
 	let readableStreamCancel = false;
+
 	// 创建一个新的可读流
 	const stream = new ReadableStream({
 		// 当流开始时的初始化函数
@@ -1205,7 +1212,7 @@ function 配置信息(UUID, 域名地址) {
 		传输层安全 = ['', false];
 	}
 
-	const 威图瑞 = `${协议类型}://${用户ID}@${地址}:${端口}\u003f\u0065\u006e\u0063\u0072\u0079` + 'p' + `${atob('dGlvbj0=') + 加密方式}\u0026\u0073\u0065\u0063\u0075\u0072\u0069\u0074\u0079\u003d${传输层安全[0]}&sni=${SNI}&fp=${指纹}&type=${传输层协议}&host=${伪装域名}&path=${encodeURIComponent(路径)}#${encodeURIComponent(别名)}`;
+	const 威图瑞 = `${协议类型}://${用户ID}@${地址}:${端口}\u003f\u0065\u006e\u0063\u0072\u0079` + 'p' + `${atob('dGlvbj0=') + 加密方式}\u0026\u0073\u0065\u0063\u0075\u0072\u0069\u0074\u0079\u003d${传输层安全[0]}&sni=${SNI}&fp=${指纹}&type=${传输层协议}&host=${伪装域名}&path=${encodeURIComponent(路径)}&allowInsecure=1&fragment=1,40-60,30-50,tlshello#${encodeURIComponent(别名)}`;
 	const 猫猫猫 = `- {name: ${FileName}, server: ${地址}, port: ${端口}, type: ${协议类型}, uuid: ${用户ID}, tls: ${传输层安全[1]}, alpn: [h3], udp: false, sni: ${SNI}, tfo: false, skip-cert-verify: true, servername: ${伪装域名}, client-fingerprint: ${指纹}, network: ${传输层协议}, ws-opts: {path: "${路径}", headers: {${伪装域名}}}}`;
 	return [威图瑞, 猫猫猫];
 }
@@ -1258,11 +1265,20 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 		if ((addresses.length + addressesapi.length + addressesnotls.length + addressesnotlsapi.length + addressescsv.length) == 0) {
 			// 定义 Cloudflare IP 范围的 CIDR 列表
 			let cfips = [
-				'103.21.244.0/23',
+				'103.21.244.0/24',
 				'104.16.0.0/13',
 				'104.24.0.0/14',
 				'172.64.0.0/14',
-				'103.21.244.0/23',
+				'104.16.0.0/14',
+				'104.24.0.0/15',
+				'141.101.64.0/19',
+				'172.64.0.0/14',
+				'188.114.96.0/21',
+				'190.93.240.0/21',
+				'162.159.152.0/23',
+				'104.16.0.0/13',
+				'104.24.0.0/14',
+				'172.64.0.0/14',
 				'104.16.0.0/14',
 				'104.24.0.0/15',
 				'141.101.64.0/19',
@@ -1288,10 +1304,17 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 				return randomIP.join('.');
 			}
 			addresses = addresses.concat('127.0.0.1:1234#CFnat');
-			if (hostName.includes(".workers.dev")) {
-				addressesnotls = addressesnotls.concat(cfips.map(cidr => generateRandomIPFromCIDR(cidr) + '#CF随机节点'));
+			let counter = 1;
+			if (hostName.includes("worker") || hostName.includes("notls")) {
+				const randomPorts = httpPorts.concat('80');
+				addressesnotls = addressesnotls.concat(
+					cfips.map(cidr => generateRandomIPFromCIDR(cidr) + ':' + randomPorts[Math.floor(Math.random() * randomPorts.length)] + '#CF随机节点' + String(counter++).padStart(2, '0'))
+				);
 			} else {
-				addresses = addresses.concat(cfips.map(cidr => generateRandomIPFromCIDR(cidr) + '#CF随机节点'));
+				const randomPorts = httpsPorts.concat('443');
+				addresses = addresses.concat(
+					cfips.map(cidr => generateRandomIPFromCIDR(cidr) + ':' + randomPorts[Math.floor(Math.random() * randomPorts.length)] + '#CF随机节点' + String(counter++).padStart(2, '0'))
+				);
 			}
 		}
 	}
@@ -1379,21 +1402,26 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 			singbox订阅地址:<br>
 			<a href="javascript:void(0)" onclick="copyToClipboard('https://${proxyhost}${hostName}/${uuid}?sb','qrcode_3')" style="color:blue;text-decoration:underline;cursor:pointer;">https://${proxyhost}${hostName}/${uuid}?sb</a><br>
 			<div id="qrcode_3" style="margin: 10px 10px 10px 10px;"></div>
+			loon订阅地址:<br>
+			<a href="javascript:void(0)" onclick="copyToClipboard('https://${proxyhost}${hostName}/${uuid}?loon','qrcode_5')" style="color:blue;text-decoration:underline;cursor:pointer;">https://${proxyhost}${hostName}/${uuid}?loon</a><br>
+			<div id="qrcode_5" style="margin: 10px 10px 10px 10px;"></div>
 			<strong><a href="javascript:void(0);" id="noticeToggle" onclick="toggleNotice()">实用订阅技巧∨</a></strong><br>
 				<div id="noticeContent" class="notice-content" style="display: none;">
-					<strong>1.</strong> 如您使用的是 PassWall、SSR+ 等路由插件，推荐使用 <strong>Base64订阅地址</strong> 进行订阅；<br>
+					<strong>1.</strong> 如您使用的是 PassWall、PassWall2 路由插件，订阅编辑的 <strong>用户代理(User-Agent)</strong> 设置为 <strong>PassWall</strong> 即可；<br>
 					<br>
-					<strong>2.</strong> 快速切换 <a href='${atob('aHR0cHM6Ly9naXRodWIuY29tL2NtbGl1L1dvcmtlclZsZXNzMnN1Yg==')}'>优选订阅生成器</a> 至：sub.google.com，您可将"?sub=sub.google.com"参数添加到链接末尾，例如：<br>
+					<strong>2.</strong> 如您使用的是 SSR+ 路由插件，推荐使用 <strong>Base64订阅地址</strong> 进行订阅；<br>
+					<br>
+					<strong>3.</strong> 快速切换 <a href='${atob('aHR0cHM6Ly9naXRodWIuY29tL2NtbGl1L1dvcmtlclZsZXNzMnN1Yg==')}'>优选订阅生成器</a> 至：sub.google.com，您可将"?sub=sub.google.com"参数添加到链接末尾，例如：<br>
 					&nbsp;&nbsp;https://${proxyhost}${hostName}/${uuid}<strong>?sub=sub.google.com</strong><br>
 					<br>
-					<strong>3.</strong> 快速更换 PROXYIP 至：proxyip.fxxk.dedyn.io:443，您可将"?proxyip=proxyip.fxxk.dedyn.io:443"参数添加到链接末尾，例如：<br>
-					&nbsp;&nbsp; https://${proxyhost}${hostName}/${uuid}<strong>?proxyip=proxyip.fxxk.dedyn.io:443</strong><br>
+					<strong>4.</strong> 快速更换 PROXYIP 至：proxyip.cmliussss.net:443，您可将"?proxyip=proxyip.cmliussss.net:443"参数添加到链接末尾，例如：<br>
+					&nbsp;&nbsp; https://${proxyhost}${hostName}/${uuid}<strong>?proxyip=proxyip.cmliussss.net:443</strong><br>
 					<br>
-					<strong>4.</strong> 快速更换 SOCKS5 至：user:password@127.0.0.1:1080，您可将"?socks5=user:password@127.0.0.1:1080"参数添加到链接末尾，例如：<br>
+					<strong>5.</strong> 快速更换 SOCKS5 至：user:password@127.0.0.1:1080，您可将"?socks5=user:password@127.0.0.1:1080"参数添加到链接末尾，例如：<br>
 					&nbsp;&nbsp;https://${proxyhost}${hostName}/${uuid}<strong>?socks5=user:password@127.0.0.1:1080</strong><br>
 					<br>
-					<strong>5.</strong> 如需指定多个参数则需要使用'&'做间隔，例如：<br>
-					&nbsp;&nbsp;https://${proxyhost}${hostName}/${uuid}?sub=sub.google.com<strong>&</strong>proxyip=proxyip.fxxk.dedyn.io<br>
+					<strong>6.</strong> 如需指定多个参数则需要使用'&'做间隔，例如：<br>
+					&nbsp;&nbsp;https://${proxyhost}${hostName}/${uuid}?sub=sub.google.com<strong>&</strong>proxyip=proxyip.cmliussss.net<br>
 				</div>
 			<script src="https://cdn.jsdelivr.net/npm/@keeex/qrcodejs-kx@1.0.2/qrcode.min.js"></script>
 			<script>
@@ -1452,7 +1480,7 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 			################################################################<br>
 			${cmad}
 			`;
-		return 节点配置页;
+		return `<div style="font-size:13px;">${节点配置页}</div>`;
 	} else {
 		if (typeof fetch != 'function') {
 			return 'Error: fetch is not available in this environment.';
@@ -1518,12 +1546,15 @@ async function 生成配置信息(userID, hostName, sub, UA, RproxyIP, _url, fak
 			console.log(`虚假订阅: ${url}`);
 		}
 
-		if (!userAgent.includes(('CF-Workers-SUB').toLowerCase())) {
+		if (!userAgent.includes(('CF-Workers-SUB').toLowerCase()) && !_url.searchParams.has('b64') && !_url.searchParams.has('base64')) {
 			if ((userAgent.includes('clash') && !userAgent.includes('nekobox')) || (_url.searchParams.has('clash') && !userAgent.includes('subconverter'))) {
 				url = `${subProtocol}://${subConverter}/sub?target=clash&url=${encodeURIComponent(url)}&insert=false&config=${encodeURIComponent(subConfig)}&emoji=${subEmoji}&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
 				isBase64 = false;
 			} else if (userAgent.includes('sing-box') || userAgent.includes('singbox') || ((_url.searchParams.has('singbox') || _url.searchParams.has('sb')) && !userAgent.includes('subconverter'))) {
 				url = `${subProtocol}://${subConverter}/sub?target=singbox&url=${encodeURIComponent(url)}&insert=false&config=${encodeURIComponent(subConfig)}&emoji=${subEmoji}&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
+				isBase64 = false;
+			} else if (userAgent.includes('loon') || (_url.searchParams.has('loon') && !userAgent.includes('subconverter'))) {
+				url = `${subProtocol}://${subConverter}/sub?target=loon&url=${encodeURIComponent(url)}&insert=false&config=${encodeURIComponent(subConfig)}&emoji=${subEmoji}&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
 				isBase64 = false;
 			}
 		}
@@ -1630,7 +1661,7 @@ async function 整理优选列表(api) {
 		clearTimeout(timeout);
 	}
 
-	const newAddressesapi = await 整理(newapi); 
+	const newAddressesapi = await 整理(newapi);
 
 	// 返回处理后的结果
 	return newAddressesapi;
@@ -1642,12 +1673,13 @@ async function 整理测速结果(tls) {
 	}
 
 	let newAddressescsv = [];
+
 	for (const csvUrl of addressescsv) {
 		try {
 			const response = await fetch(csvUrl);
 
 			if (!response.ok) {
-				console.error('获取CSV地址时出错:', response.status, response.statusText); 
+				console.error('获取CSV地址时出错:', response.status, response.statusText);
 				continue;
 			}
 
@@ -1664,7 +1696,8 @@ async function 整理测速结果(tls) {
 			const tlsIndex = header.indexOf('TLS');
 			const ipAddressIndex = 0;// IP地址在 CSV 头部的位置
 			const portIndex = 1;// 端口在 CSV 头部的位置
-			//const dataCenterIndex = tlsIndex + remarkIndex; // 数据中心是 TLS 的后一个字段
+			// const dataCenterIndex = tlsIndex + remarkIndex; // 数据中心是 TLS 的后一个字段
+            // 添加国家和城市字段的索引
 			const countryIndex = tlsIndex + countrynum;
 			const cityIndex = tlsIndex + citynum;
 
@@ -1682,6 +1715,7 @@ async function 整理测速结果(tls) {
 					const ipAddress = columns[ipAddressIndex];
 					const port = columns[portIndex];
 					// const dataCenter = columns[dataCenterIndex];
+                    // 添加国家和城市字段
 					const country = columns[countryIndex];
 					const city = columns[cityIndex];
 					const formattedAddress = `${ipAddress}:${port}#${country} | ${city} | ${rename}`;
@@ -1698,6 +1732,7 @@ async function 整理测速结果(tls) {
 			continue;
 		}
 	}
+
 	return newAddressescsv;
 }
 
@@ -1717,7 +1752,7 @@ function 生成本地订阅(host, UUID, noTLS, newAddressesapi, newAddressescsv,
 
 			const match = addressid.match(regex);
 			if (!match) {
-				if (address.includes(':') && address.includes('#')) { 
+				if (address.includes(':') && address.includes('#')) {
 					const parts = address.split(':');
 					address = parts[0];
 					const subParts = parts[1].split('#');
@@ -1742,7 +1777,6 @@ function 生成本地订阅(host, UUID, noTLS, newAddressesapi, newAddressescsv,
 				addressid = match[3] || address;
 			}
 
-			const httpPorts = ["8080", "8880", "2052", "2082", "2086", "2095"];
 			if (!isValidIPv4(address) && port == "-1") {
 				for (let httpPort of httpPorts) {
 					if (address.includes(httpPort)) {
@@ -1757,9 +1791,8 @@ function 生成本地订阅(host, UUID, noTLS, newAddressesapi, newAddressescsv,
 			let 最终路径 = path;
 			let 节点备注 = '';
 			const 协议类型 = atob(啥啥啥_写的这是啥啊);
-
-			const 维列斯Link = `${协议类型}://${UUID}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT0mdHlwZT13cyZob3N0PQ==') + 伪装域名}&path=${encodeURIComponent(最终路径)}#${encodeURIComponent(addressid + 节点备注)}`;
-
+            // 节点备注后面加 rename
+			const 维列斯Link = `${协议类型}://${UUID}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT0mdHlwZT13cyZob3N0PQ==') + 伪装域名}&path=${encodeURIComponent(最终路径)}#${encodeURIComponent(addressid + 节点备注 + rename)}`;
 			return 维列斯Link;
 
 		}).join('\n');
@@ -1814,7 +1847,7 @@ function 生成本地订阅(host, UUID, noTLS, newAddressesapi, newAddressescsv,
 		let 最终路径 = path;
 		let 节点备注 = '';
 		const matchingProxyIP = proxyIPPool.find(proxyIP => proxyIP.includes(address));
-		if (matchingProxyIP) 最终路径 += `&proxyip=${matchingProxyIP}`;
+		if (matchingProxyIP) 最终路径 = `/proxyip=${matchingProxyIP}`;
 
 		if (proxyhosts.length > 0 && (伪装域名.includes('.workers.dev'))) {
 			最终路径 = `/${伪装域名}${最终路径}`;
@@ -1823,7 +1856,8 @@ function 生成本地订阅(host, UUID, noTLS, newAddressesapi, newAddressescsv,
 		}
 
 		const 协议类型 = atob(啥啥啥_写的这是啥啊);
-		const 维列斯Link = `${协议类型}://${UUID}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT10bHMmc25pPQ==') + 伪装域名}&fp=random&type=ws&host=${伪装域名}&path=${encodeURIComponent(最终路径)}#${encodeURIComponent(addressid + 节点备注)}`;
+        // 节点备注后面加 rename
+		const 维列斯Link = `${协议类型}://${UUID}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT10bHMmc25pPQ==') + 伪装域名}&fp=random&type=ws&host=${伪装域名}&path=${encodeURIComponent(最终路径)}&allowInsecure=1&fragment=1,40-60,30-50,tlshello#${encodeURIComponent(addressid + 节点备注 + rename)}`;
 
 		return 维列斯Link;
 	}).join('\n');
