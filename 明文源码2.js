@@ -122,7 +122,7 @@ export default {
 				if (env.ADDCSV) addressescsv = await 整理(env.ADDCSV);
 				DLS = Number(env.DLS) || DLS;
 				// 新增 rename、countrynum、citynum变量
-                rename = env.RENAME || rename;
+                		rename = env.RENAME || rename;
 				countrynum = parseInt(env.COUNTRYNUM || countrynum, 10);
 				citynum = parseInt(env.CITYNUM || citynum, 10);           
 				// remarkIndex = Number(env.CSVREMARK) || remarkIndex;
@@ -1791,8 +1791,7 @@ function 生成本地订阅(host, UUID, noTLS, newAddressesapi, newAddressescsv,
 			let 最终路径 = path;
 			let 节点备注 = '';
 			const 协议类型 = atob(啥啥啥_写的这是啥啊);
-            // 节点备注后面加 rename
-			const 维列斯Link = `${协议类型}://${UUID}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT0mdHlwZT13cyZob3N0PQ==') + 伪装域名}&path=${encodeURIComponent(最终路径)}#${encodeURIComponent(addressid + 节点备注 + rename)}`;
+			const 维列斯Link = `${协议类型}://${UUID}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT0mdHlwZT13cyZob3N0PQ==') + 伪装域名}&path=${encodeURIComponent(最终路径)}#${encodeURIComponent(addressid + 节点备注)}`;
 			return 维列斯Link;
 
 		}).join('\n');
@@ -1856,9 +1855,7 @@ function 生成本地订阅(host, UUID, noTLS, newAddressesapi, newAddressescsv,
 		}
 
 		const 协议类型 = atob(啥啥啥_写的这是啥啊);
-        // 节点备注后面加 rename
-		const 维列斯Link = `${协议类型}://${UUID}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT10bHMmc25pPQ==') + 伪装域名}&fp=random&type=ws&host=${伪装域名}&path=${encodeURIComponent(最终路径)}&allowInsecure=1&fragment=1,40-60,30-50,tlshello#${encodeURIComponent(addressid + 节点备注 + rename)}`;
-
+		const 维列斯Link = `${协议类型}://${UUID}@${address}:${port + atob('P2VuY3J5cHRpb249bm9uZSZzZWN1cml0eT10bHMmc25pPQ==') + 伪装域名}&fp=random&type=ws&host=${伪装域名}&path=${encodeURIComponent(最终路径)}&allowInsecure=1&fragment=1,40-60,30-50,tlshello#${encodeURIComponent(addressid + 节点备注)}`;
 		return 维列斯Link;
 	}).join('\n');
 
