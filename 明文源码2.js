@@ -1858,7 +1858,7 @@ async function 整理测速结果(tls) {
                     //const formattedAddress = `${ipAddress}:${port}#${dataCenter}`;
 		    const country = columns[countryIndex];
 		    const city = columns[cityIndex];
-		    const formattedAddress = `${ipAddress}:${port}#${country} | ${city} | rename`;
+		    const formattedAddress = `${ipAddress}:${port}#${country} | ${city} | ${rename}`;
                     newAddressescsv.push(formattedAddress);
                     if (csvUrl.includes('proxyip=true') && columns[tlsIndex].toUpperCase() == 'true' && !httpsPorts.includes(port)) {
                         // 如果URL带有'proxyip=true'，则将内容添加到proxyIPPool
