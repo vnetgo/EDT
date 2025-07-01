@@ -276,7 +276,7 @@ async function processOther(link, env, useFlag, useSuffix, useOrg) {
 
 // 前端页面生成函数
 function frontendPage(env) {
-  const bgImg = env.BG_IMG || 'https://raw.githubusercontent.com/yutian81/data-source/main/picbed/vpscheck_beijing.jpg';
+  const bgImg = env.BG_IMG || 'https://pan.811520.xyz/icon/back.webp';
   return `
   <!DOCTYPE html>
   <html>
